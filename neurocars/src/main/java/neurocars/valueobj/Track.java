@@ -11,17 +11,17 @@ import java.util.List;
  */
 public class Track {
 
-  private List<XY> wayPoints = new ArrayList<XY>();
+  private List<WayPoint> wayPoints = new ArrayList<WayPoint>();
 
   public Track() {
     super();
   }
 
-  public void addWayPoint(int x, int y) {
-    getWayPoints().add(new XY(x, y));
+  public void addWayPoint(int x, int y, int size) {
+    getWayPoints().add(new WayPoint(x, y, size));
   }
 
-  public List<XY> getWayPoints() {
+  public List<WayPoint> getWayPoints() {
     return wayPoints;
   }
 }

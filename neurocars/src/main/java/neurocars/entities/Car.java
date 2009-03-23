@@ -1,16 +1,25 @@
 package neurocars.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import neurocars.Game;
 import neurocars.controllers.IController;
-import neurocars.utils.AngleUtils;
-import neurocars.valueobj.VehicleSetup;
-import neurocars.valueobj.XY;
+import neurocars.utils.AppUtils;
+import neurocars.valueobj.CarSetup;
+import neurocars.valueobj.WayPoint;
 
-public class Vehicle extends Entity {
+/**
+ * API auta
+ * 
+ * @author Lukas Holcik
+ * 
+ */
+public class Car extends Entity {
 
   private final String id;
   private final IController controller;
-  private final VehicleSetup model;
+  private final CarSetup setup;
 
   private double angle; // uhel natoceni auta - rad
 
@@ -21,21 +30,27 @@ public class Vehicle extends Entity {
 
   private double nextWayPointDistance;
 
-  public Vehicle(Game game, String id, VehicleSetup carModel,
-      IController controller) {
+  private int lap;
+  private long lapStartTime;
+  private List<Long> lapTimes = new ArrayList<Long>();
+
+  public Car(Game game, String id, CarSetup setup, IController controller) {
     super(game);
     this.id = id;
-    this.model = carModel;
+    this.setup = setup;
     this.controller = controller;
   }
 
-  public void input() {
+  /**
+   * Vyhodnoti vstup z controlleru
+   */
+  public void processInput() {
     // zrychleni
     if (controller.accelerate()) {
       double speed = getSpeed();
-      speed += model.getEnginePower();
-      if (speed > model.getMaxForwardSpeed()) {
-        speed = model.getMaxForwardSpeed();
+      speed += setup.getEnginePower();
+      if (speed > setup.getMaxForwardSpeed()) {
+        speed = setup.getMaxForwardSpeed();
       }
       setSpeed(speed);
     }
@@ -43,9 +58,9 @@ public class Vehicle extends Entity {
     // brzda
     if (controller.brake()) {
       double speed = getSpeed();
-      speed -= model.getBrakePower();
-      if (speed < -model.getMaxBackwardSpeed()) {
-        speed = -model.getMaxBackwardSpeed();
+      speed -= setup.getBrakePower();
+      if (speed < -setup.getMaxBackwardSpeed()) {
+        speed = -setup.getMaxBackwardSpeed();
       }
       setSpeed(speed);
     }
@@ -54,7 +69,7 @@ public class Vehicle extends Entity {
     if (controller.right() ^ controller.left()) { // XOR
       double steeringWheel = getSteeringWheel();
       double k = (controller.right() ? +1 : -1);
-      steeringWheel += k * model.getSteeringPower();
+      steeringWheel += k * setup.getSteeringPower();
       if (steeringWheel > 1.0) {
         steeringWheel = 1.0;
       }
@@ -67,19 +82,22 @@ public class Vehicle extends Entity {
       double steeringWheel = getSteeringWheel();
       // TODO: koef
       final double koef = 6.0;
-      if (Math.abs(steeringWheel) < model.getSteeringPower() * koef) {
+      if (Math.abs(steeringWheel) < setup.getSteeringPower() * koef) {
         steeringWheel = 0;
       } else {
         double k = -Math.signum(steeringWheel);
-        steeringWheel += k * model.getSteeringPower() * koef;
+        steeringWheel += k * setup.getSteeringPower() * koef;
       }
       setSteeringWheel(steeringWheel);
     }
   }
 
-  public void update() {
-    double angle = getAngle() + steeringWheel * model.getTurnRange();
-    angle = AngleUtils.normalizeAngle(angle);
+  /**
+   * Prepocita rychlosti, souradnice, atd ...
+   */
+  public void updateLocation() {
+    double angle = getAngle() + steeringWheel * setup.getTurnRange();
+    angle = AppUtils.normalizeAngle(angle);
     setAngle(angle);
 
     double ddx = getSpeed() * Math.cos(angle);
@@ -107,15 +125,32 @@ public class Vehicle extends Entity {
 
     x += vx;
     y += vy;
+
+    this.updateWayPoint();
   }
 
-  public void updateWayPoint(XY wayPoint) {
+  /**
+   * Prepocita informace o nasledujicim bode trasy
+   */
+  public void updateWayPoint() {
+    WayPoint wayPoint = game.getTrack().getWayPoints().get(nextWayPoint);
+
+    // prepocitani vzdalenosti
     nextWayPointDistance = Math.sqrt(Math.pow(getX() - wayPoint.getX(), 2)
         + Math.pow(getY() - wayPoint.getY(), 2));
-    // TODO: distance
-    if (nextWayPointDistance <= 50) {
-      this.nextWayPoint++;
-      this.nextWayPoint %= getGame().getTrack().getWayPoints().size();
+    if (nextWayPointDistance <= wayPoint.getSize() / 2) {
+      nextWayPoint++;
+      if (nextWayPoint >= getGame().getTrack().getWayPoints().size()) {
+        nextWayPoint = 0;
+      }
+      // smeruju na druhy bod trate ... zacal jsem dalsi kolo
+      if (this.nextWayPoint == 1) {
+        lap++;
+        if (lap > 1) {
+          lapTimes.add(game.getCycleCounter() - lapStartTime);
+        }
+        lapStartTime = game.getCycleCounter();
+      }
     }
   }
 
@@ -151,19 +186,31 @@ public class Vehicle extends Entity {
   }
 
   private void setSpeed(double velocity) {
-    if (velocity > model.getMaxForwardSpeed()
-        || velocity < -model.getMaxBackwardSpeed()) {
+    if (velocity > setup.getMaxForwardSpeed()
+        || velocity < -setup.getMaxBackwardSpeed()) {
       throw new IllegalArgumentException("" + velocity);
     }
     this.speed = velocity;
   }
 
-  public VehicleSetup getModel() {
-    return model;
+  public CarSetup getSetup() {
+    return setup;
   }
 
   public int getNextWayPoint() {
     return nextWayPoint;
+  }
+
+  public int getLap() {
+    return lap;
+  }
+
+  public long getLapStartTime() {
+    return lapStartTime;
+  }
+
+  public List<Long> getLapTimes() {
+    return lapTimes;
   }
 
 }

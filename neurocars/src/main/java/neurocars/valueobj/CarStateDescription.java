@@ -6,7 +6,7 @@ package neurocars.valueobj;
  * @author Lukas Holcik
  * 
  */
-public class VehicleStateDescription {
+public class CarStateDescription {
 
   // rychlost auta
   private double velocity;

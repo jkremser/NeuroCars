@@ -10,16 +10,16 @@ import neurocars.Game;
  */
 public abstract class Entity {
 
-  // odkaz na instanci hry
+  /** odkaz na instanci hry */
   protected final Game game;
 
-  /** The current x location of this entity */
+  /** x souradnice */
   protected double x;
-  /** The current y location of this entity */
+  /** y souradnice */
   protected double y;
-  /** The current speed of this entity horizontally (pixels/sec) */
+  /** x-ova rychlost v jednom hernim cyklu */
   protected double vx;
-  /** The current speed of this entity vertically (pixels/sec) */
+  /** y-ova rychlost v jednom hernim cyklu */
   protected double vy;
 
   public Entity(Game game) {
