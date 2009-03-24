@@ -5,9 +5,13 @@ package neurocars.controllers;
  * 
  * @author Lukas Holcik
  */
-public class NeuroController implements IController {
+public class NeuroController extends Controller {
 
   // TODO
+
+  public void next() {
+
+  }
 
   public boolean accelerate() {
     return false;

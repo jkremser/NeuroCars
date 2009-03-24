@@ -23,8 +23,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import neurocars.Game;
+import neurocars.controllers.KeyboardController;
 import neurocars.entities.Car;
+import neurocars.gui.renderer.CarCircleRenderer;
+import neurocars.gui.renderer.ICarRenderer;
 import neurocars.gui.sprites.CarSprite;
+import neurocars.utils.ServiceException;
 import neurocars.valueobj.Track;
 import neurocars.valueobj.WayPoint;
 
@@ -46,6 +50,9 @@ public class Java2DGUI implements IGUI {
 
   // mapa reprezentujici stisknute klavesy na klavesnici
   private final boolean[] keyboard = new boolean[65535];
+
+  private final Color[] playerColors = new Color[] { Color.WHITE, Color.BLUE,
+      Color.GREEN, Color.YELLOW, Color.RED };
 
   // pozadi hraci plochy
   private BufferedImage background;
@@ -115,7 +122,7 @@ public class Java2DGUI implements IGUI {
    * 
    * @see neurocars.gui.IGUI#init()
    */
-  public void init() {
+  public void init() throws ServiceException {
     // background
     background = drawBackground(game.getTrack());
 
@@ -123,9 +130,16 @@ public class Java2DGUI implements IGUI {
     g.drawImage(background, 0, 0, null);
     g.dispose();
 
+    ICarRenderer renderer = new CarCircleRenderer();
+
     // carSprites
+    int color = 0;
     for (Car c : game.getCars()) {
-      carSprites.add(new CarSprite(c, Color.WHITE));
+      if (c.getController() instanceof KeyboardController) {
+        KeyboardController kc = (KeyboardController) c.getController();
+        kc.setKeyboard(keyboard);
+      }
+      carSprites.add(new CarSprite(c, renderer, playerColors[color++]));
     }
   }
 
@@ -137,6 +151,7 @@ public class Java2DGUI implements IGUI {
   public void refresh() {
     Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 
+    // napred vymazeme pozadi
     for (CarSprite cs : carSprites) {
       Car c = cs.getCar();
 
@@ -149,7 +164,10 @@ public class Java2DGUI implements IGUI {
 
       // g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
       // RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    }
 
+    // potom vykreslime auticka ...
+    for (CarSprite cs : carSprites) {
       cs.draw(g);
     }
 
@@ -173,8 +191,8 @@ public class Java2DGUI implements IGUI {
   private BufferedImage drawBackground(Track track) {
     BufferedImage background = gc.createCompatibleImage(game.getXScreenSize(),
         game.getYScreenSize(), Transparency.OPAQUE);
-    Graphics g = background.getGraphics();
-    ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+    Graphics2D g = (Graphics2D) background.getGraphics();
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON);
     g.setColor(Color.BLACK);
     g.fillRect(0, 0, game.getXScreenSize(), game.getYScreenSize());
@@ -194,6 +212,7 @@ public class Java2DGUI implements IGUI {
             (int) point.getY());
       }
     }
+
     g.dispose();
     return background;
   }

@@ -65,7 +65,7 @@ public class CarSetup {
       this.enginePower = AppUtils.getDoubleValue(p, "enginePower");
       this.steeringPower = AppUtils.getDoubleValue(p, "steeringPower");
     } catch (IOException e) {
-      throw new ServiceException();
+      throw new ServiceException(e);
     }
   }
 

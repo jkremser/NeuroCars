@@ -1,5 +1,9 @@
 package neurocars.valueobj;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 /**
  * Popis stavu auta - vstupni informace pro neuronovou sit
  * 
@@ -8,8 +12,11 @@ package neurocars.valueobj;
  */
 public class CarStateDescription {
 
+  private final DecimalFormat df = new DecimalFormat("0.0##",
+      new DecimalFormatSymbols(Locale.US));
+
   // rychlost auta
-  private double velocity;
+  private double speed;
   // natoceni volantu
   private double steeringWheel;
 
@@ -28,12 +35,16 @@ public class CarStateDescription {
   // rychlost oponenta
   private double opponentVelocity;
 
-  public double getVelocity() {
-    return velocity;
+  public String toString() {
+    return df.format(speed) + ";" + df.format(steeringWheel);
   }
 
-  public void setVelocity(double velocity) {
-    this.velocity = velocity;
+  public double getSpeed() {
+    return speed;
+  }
+
+  public void setSpeed(double velocity) {
+    this.speed = velocity;
   }
 
   public double getSteeringWheel() {

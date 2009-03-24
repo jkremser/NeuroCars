@@ -1,12 +1,19 @@
 package neurocars.entities;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import neurocars.Game;
-import neurocars.controllers.IController;
+import neurocars.controllers.Controller;
+import neurocars.controllers.KeyboardController;
 import neurocars.utils.AppUtils;
+import neurocars.utils.ServiceException;
 import neurocars.valueobj.CarSetup;
+import neurocars.valueobj.CarStateDescription;
 import neurocars.valueobj.WayPoint;
 
 /**
@@ -18,7 +25,7 @@ import neurocars.valueobj.WayPoint;
 public class Car extends Entity {
 
   private final String id;
-  private final IController controller;
+  private final Controller controller;
   private final CarSetup setup;
 
   private double angle; // uhel natoceni auta - rad
@@ -29,13 +36,25 @@ public class Car extends Entity {
   private int nextWayPoint;
 
   private double nextWayPointDistance;
+  private BufferedWriter replayLog;
 
   private int lap;
   private long lapStartTime;
   private List<Long> lapTimes = new ArrayList<Long>();
 
-  public Car(Game game, String id, CarSetup setup, IController controller) {
+  public Car(Game game, String id, CarSetup setup, Controller controller) {
     super(game);
+
+    if (id == null) {
+      throw new IllegalArgumentException("id=null");
+    }
+    if (setup == null) {
+      throw new IllegalArgumentException("setup=null");
+    }
+    if (controller == null) {
+      throw new IllegalArgumentException("controller=null");
+    }
+
     this.id = id;
     this.setup = setup;
     this.controller = controller;
@@ -43,8 +62,11 @@ public class Car extends Entity {
 
   /**
    * Vyhodnoti vstup z controlleru
+   * 
+   * @throws ServiceException
    */
-  public void processInput() {
+  public void processInput() throws ServiceException {
+    controller.next();
     // zrychleni
     if (controller.accelerate()) {
       double speed = getSpeed();
@@ -69,7 +91,7 @@ public class Car extends Entity {
     if (controller.right() ^ controller.left()) { // XOR
       double steeringWheel = getSteeringWheel();
       double k = (controller.right() ? +1 : -1);
-      steeringWheel += k * setup.getSteeringPower();
+      steeringWheel += k * setup.getSteeringPower() / speed;
       if (steeringWheel > 1.0) {
         steeringWheel = 1.0;
       }
@@ -129,8 +151,52 @@ public class Car extends Entity {
     this.updateWayPoint();
   }
 
+  public void openReplayLog() throws ServiceException {
+    if (!(controller instanceof KeyboardController)) {
+      return;
+    }
+    if (replayLog != null) {
+      throw new ServiceException("Log already opened!");
+    }
+    try {
+      File logFile = new File(id + "_replay.txt");
+      replayLog = new BufferedWriter(new FileWriter(logFile));
+    } catch (IOException e) {
+      throw new ServiceException(e);
+    }
+  }
+
+  public void writeReplayEntry() throws ServiceException {
+    if (!(controller instanceof KeyboardController)) {
+      return;
+    }
+    if (replayLog == null) {
+      throw new ServiceException("Log not opened!");
+    }
+    try {
+      replayLog.write(controller.toString() + ";"
+          + getCarStateDescription().toString());
+      replayLog.newLine();
+    } catch (IOException e) {
+      throw new ServiceException(e);
+    }
+  }
+
+  public void closeReplayLog() throws ServiceException {
+    if (!(controller instanceof KeyboardController)) {
+      return;
+    }
+    try {
+      if (replayLog != null) {
+        replayLog.close();
+      }
+    } catch (IOException e) {
+      throw new ServiceException(e);
+    }
+  }
+
   /**
-   * Prepocita informace o nasledujicim bode trasy
+   * Prepocita informace o nasledujicim bodu trasy
    */
   public void updateWayPoint() {
     WayPoint wayPoint = game.getTrack().getWayPoints().get(nextWayPoint);
@@ -154,11 +220,24 @@ public class Car extends Entity {
     }
   }
 
+  public CarStateDescription getCarStateDescription() {
+    CarStateDescription d = new CarStateDescription();
+
+    // WayPoint wayPoint =
+    // getGame().getTrack().getWayPoints().get(nextWayPoint);
+
+    d.setSpeed(speed);
+    d.setSteeringWheel(steeringWheel);
+    // d.setDistanceToNextPoint(new double[] { nextWayPointDistance });
+
+    return d;
+  }
+
   public String getId() {
     return id;
   }
 
-  public IController getController() {
+  public Controller getController() {
     return controller;
   }
 

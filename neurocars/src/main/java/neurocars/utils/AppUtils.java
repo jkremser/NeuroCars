@@ -12,7 +12,10 @@ import org.apache.commons.lang.math.NumberUtils;
  */
 public class AppUtils {
 
-  public static final double DEGREE = 2 * Math.PI / 360.0;
+  /** Stupen v radianech */
+  public static final double DEGREE = Math.PI / 180.0;
+  /** Gravitacni zrychleni */
+  public static final double G = 9.81;
 
   /**
    * Prevede uhel do intervalu [0 .. 2 * PI]
@@ -36,6 +39,18 @@ public class AppUtils {
       throw new ServiceException("Required parameter not found: " + key);
     }
     return NumberUtils.toDouble(p.getProperty(key));
+  }
+
+  public static int getIntValue(Properties p, String key)
+      throws ServiceException {
+    if (!p.containsKey(key)) {
+      throw new ServiceException("Required parameter not found: " + key);
+    }
+    return NumberUtils.toInt(p.getProperty(key));
+  }
+
+  public static int getBooleanAsNumber(boolean b) {
+    return b ? 1 : 0;
   }
 
 }

@@ -6,38 +6,69 @@ package neurocars.controllers;
  * @author Lukas Holcik
  * 
  */
-public class KeyboardController implements IController {
+public class KeyboardController extends Controller {
 
-  private final boolean[] keyCodes;
+  private boolean[] keyboard;
   private final int accelerate;
   private final int brake;
   private final int right;
   private final int left;
 
-  public KeyboardController(boolean[] keyCodes, int accelerate, int brake,
-      int right, int left) {
+  public KeyboardController(int accelerate, int brake, int left, int right) {
     super();
-    this.keyCodes = keyCodes;
     this.accelerate = accelerate;
     this.brake = brake;
     this.right = right;
     this.left = left;
   }
 
+  public void setKeyboard(boolean[] keyboard) {
+    this.keyboard = keyboard;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.controllers.Controller#next()
+   */
+  public void next() {
+    // NOOP
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.controllers.Controller#accelerate()
+   */
   public boolean accelerate() {
-    return keyCodes[this.accelerate];
+    return keyboard[this.accelerate];
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.controllers.Controller#brake()
+   */
   public boolean brake() {
-    return keyCodes[this.brake];
+    return keyboard[this.brake];
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.controllers.Controller#left()
+   */
   public boolean left() {
-    return keyCodes[this.left];
+    return keyboard[this.left];
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.controllers.Controller#right()
+   */
   public boolean right() {
-    return keyCodes[this.right];
+    return keyboard[this.right];
   }
 
 }

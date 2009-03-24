@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import neurocars.entities.Car;
+import neurocars.gui.renderer.ICarRenderer;
 
 /**
  * Graficka reprezentace zavodniho auta
@@ -14,11 +15,12 @@ import neurocars.entities.Car;
 public class CarSprite implements ISprite {
 
   private final Car car;
-
+  private final ICarRenderer renderer;
   private final Color color;
 
-  public CarSprite(Car v, Color color) {
+  public CarSprite(Car v, ICarRenderer renderer, Color color) {
     this.car = v;
+    this.renderer = renderer;
     this.color = color;
   }
 
@@ -27,21 +29,6 @@ public class CarSprite implements ISprite {
   }
 
   public void draw(Graphics g) {
-    g.setColor(color);
-    int x = (int) car.getX();
-    int y = (int) car.getY();
-    int size = 10;
-    g.drawOval(x - size / 2, y - size / 2, size, size);
-
-    int length = 5;
-    g.drawLine(x, y, (int) (x + length * Math.cos(car.getAngle())),
-        (int) (y + length * Math.sin(car.getAngle())));
-
-    g.setColor(Color.GREEN);
-    double steeringAngle = car.getAngle() + car.getSteeringWheel()
-        * car.getSetup().getSteeringPower();
-    g.drawLine(x, y, (int) (x + length * car.getSpeed()
-        * Math.cos(steeringAngle)), (int) (y + length * car.getSpeed()
-        * Math.sin(steeringAngle)));
+    renderer.draw(g, car, color);
   }
 }
