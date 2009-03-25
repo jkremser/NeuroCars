@@ -10,7 +10,7 @@ import java.util.Locale;
  * @author Lukas Holcik
  * 
  */
-public class CarStateDescription {
+public class NeuralNetworkInput {
 
   private final DecimalFormat df = new DecimalFormat("0.0##",
       new DecimalFormatSymbols(Locale.US));
@@ -21,9 +21,9 @@ public class CarStateDescription {
   private double steeringWheel;
 
   // uhel k dalsim bodum cesty - odkloneni od meho smeru
-  private double angleToNextPoint[];
+  private double wayPointAngle[];
   // vzdalenost k dalsim bodum cesty
-  private double distanceToNextPoint[];
+  private double wayPointDistance[];
 
   // uhel k nejblizsimu oponentovi
   private double angleToOpponent;
@@ -36,7 +36,15 @@ public class CarStateDescription {
   private double opponentVelocity;
 
   public String toString() {
-    return df.format(speed) + ";" + df.format(steeringWheel);
+    StringBuffer sb = new StringBuffer();
+    sb.append(df.format(speed) + ";");
+    sb.append(df.format(steeringWheel) + ";");
+    for (int i = 0; i < wayPointDistance.length; i++) {
+      sb.append(df.format(wayPointDistance[i]) + ";");
+      sb.append(df.format(wayPointAngle[i]) + ";");
+    }
+
+    return sb.toString();
   }
 
   public double getSpeed() {
@@ -55,20 +63,20 @@ public class CarStateDescription {
     this.steeringWheel = steeringWheel;
   }
 
-  public double[] getAngleToNextPoint() {
-    return angleToNextPoint;
+  public double[] getWayPointAngle() {
+    return wayPointAngle;
   }
 
-  public void setAngleToNextPoint(double[] angleToNextPoint) {
-    this.angleToNextPoint = angleToNextPoint;
+  public void setWayPointAngle(double[] angleToNextPoint) {
+    this.wayPointAngle = angleToNextPoint;
   }
 
-  public double[] getDistanceToNextPoint() {
-    return distanceToNextPoint;
+  public double[] getWayPointDistance() {
+    return wayPointDistance;
   }
 
-  public void setDistanceToNextPoint(double[] distanceToNextPoint) {
-    this.distanceToNextPoint = distanceToNextPoint;
+  public void setWayPointDistance(double[] distanceToNextPoint) {
+    this.wayPointDistance = distanceToNextPoint;
   }
 
   public double getAngleToOpponent() {

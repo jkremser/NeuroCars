@@ -1,10 +1,13 @@
 package neurocars;
 
 import java.awt.event.KeyEvent;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import neurocars.controllers.KeyboardController;
@@ -37,6 +40,8 @@ public class Game {
 
   // pocitadlo cyklu - kvuli mereni casu
   private long cycleCounter;
+  // ukoncovac programu
+  private long finalCycle = Long.MAX_VALUE;
 
   private final IGUI gui;
   private final int xScreenSize;
@@ -44,9 +49,11 @@ public class Game {
   private final Track track;
   private final TerrainSetup terrain;
   private final List<Car> cars;
+  private final int laps;
 
   // format desetinnych cisel
   private NumberFormat nf = new DecimalFormat("0.000");
+  private DateFormat df = new SimpleDateFormat("m:ss.SSS");
 
   /**
    * Vytvori a inicializuje hru
@@ -62,6 +69,7 @@ public class Game {
     this.cars = sc.getCars();
     this.track = sc.getTrack();
     this.terrain = sc.getTerrain();
+    this.laps = sc.getLaps();
 
     this.gui = new Java2DGUI(this);
   }
@@ -72,11 +80,12 @@ public class Game {
    * @throws ServiceException
    */
   public Game(int xScreenSize, int yScreenSize, Track track,
-      TerrainSetup terrain) throws ServiceException {
+      TerrainSetup terrain, int laps) throws ServiceException {
     this.xScreenSize = xScreenSize;
     this.yScreenSize = yScreenSize;
     this.track = track;
     this.terrain = terrain;
+    this.laps = laps;
 
     this.cars = new ArrayList<Car>();
 
@@ -90,7 +99,6 @@ public class Game {
   }
 
   public void start() throws ServiceException {
-    long lastLoopTime = System.currentTimeMillis();
     boolean[] keyboard = gui.getKeyboard();
     cycleCounter = 0;
 
@@ -108,25 +116,40 @@ public class Game {
 
     gui.init();
 
+    // long startTime = System.currentTimeMillis();
+    long lastLoopTime = System.currentTimeMillis();
+
     try {
-      while (!keyboard[KeyEvent.VK_ESCAPE]) {
+      while (!keyboard[KeyEvent.VK_ESCAPE] && cycleCounter < finalCycle) {
         long delta = System.currentTimeMillis() - lastLoopTime;
         lastLoopTime = System.currentTimeMillis();
 
-        for (Car c : cars) {
+        for (int i = 0; i < cars.size(); i++) {
+          Car c = cars.get(i);
           // zpracovani vstupu
           c.processInput();
+
+          // for (int j = i; j < cars.size(); j++) {
+          // Car opponent = cars.get(j);
+          // if (c.checkCollision(opponent)) {
+          // c.collision(opponent);
+          // }
+          // }
+
           // zmena pozice
           c.updateLocation();
 
-          c.writeReplayEntry();
+          if (c.getController() instanceof KeyboardController) {
+            c.writeReplayEntry();
+          }
+
           if (log.isDebugEnabled() && c.getId().endsWith("debug")) {
             statusMessage = "X=" + nf.format(c.getX()) + ";Y="
                 + nf.format(c.getY()) + ";speed=" + nf.format(c.getSpeed())
                 + ";angle=" + nf.format(c.getAngle()) + ";steeringWheel="
                 + nf.format(c.getSteeringWheel()) + ";nextWayPoint="
                 + c.getNextWayPoint() + ";lap=" + c.getLap() + ";lapTimes="
-                + c.getLapTimes();
+                + c.getLapTimes() + ";cycleTime=" + delta;
           }
 
         }
@@ -140,6 +163,11 @@ public class Game {
 
         cycleCounter++;
       }
+
+      // zavod byl dokoncen
+      if (cycleCounter >= finalCycle) {
+        this.printWinners();
+      }
     } finally {
       this.finish();
     }
@@ -149,6 +177,37 @@ public class Game {
     for (Car c : this.getCars()) {
       c.closeReplayLog();
     }
+  }
+
+  public void checkCarsFinished() {
+    boolean finished = true;
+    for (Car c : this.getCars()) {
+      if (!c.isFinished()) {
+        finished = false;
+        break;
+      }
+    }
+
+    if (finished) {
+      finalCycle = cycleCounter + 50;
+    }
+  }
+
+  public void printWinners() {
+    long[] times = new long[cars.size()];
+
+    for (int i = 0; i < cars.size(); i++) {
+      Car c = cars.get(i);
+      long time = 0;
+      for (int j = 0; j < c.getLapTimes().size(); j++) {
+        time += c.getLapTimes().get(j);
+      }
+      times[i] = time;
+
+      Date d = new Date(time * CYCLE_DELAY);
+      System.out.println(c.getId() + ": " + df.format(d));
+    }
+
   }
 
   public int getXScreenSize() {
@@ -177,6 +236,10 @@ public class Game {
 
   public long getCycleCounter() {
     return cycleCounter;
+  }
+
+  public int getLaps() {
+    return laps;
   }
 
   public static void main(final String[] args) {

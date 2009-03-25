@@ -27,6 +27,7 @@ public class Scenario {
 
   private final int xScreenSize;
   private final int yScreenSize;
+  private final int laps;
   private final Track track;
   private final List<Car> cars;
   private final TerrainSetup terrain;
@@ -45,12 +46,13 @@ public class Scenario {
     try {
       p.load(is);
 
-      xScreenSize = AppUtils.getIntValue(p, "xscreensize");
-      yScreenSize = AppUtils.getIntValue(p, "yscreensize");
+      this.xScreenSize = AppUtils.getIntValue(p, "xscreensize");
+      this.yScreenSize = AppUtils.getIntValue(p, "yscreensize");
+      this.laps = AppUtils.getIntValue(p, "laps");
 
-      cars = this.configCars(game, p);
-      track = this.configTrack(p);
-      terrain = this.configTerrain(p);
+      this.cars = this.configCars(game, p);
+      this.track = this.configTrack(p);
+      this.terrain = this.configTerrain(p);
     } catch (IOException e) {
       throw new ServiceException(e);
     }
@@ -81,18 +83,21 @@ public class Scenario {
       Controller c = null;
       if (CONTROLLER_KEYBOARD.equals(p.getProperty(controllerKey))) {
         // KeyboardController
-        int up = AppUtils.getIntValue(p, controllerKey + ".up");
-        int down = AppUtils.getIntValue(p, controllerKey + ".down");
+        int up = AppUtils.getIntValue(p, controllerKey + ".accelerate");
+        int down = AppUtils.getIntValue(p, controllerKey + ".brake");
         int left = AppUtils.getIntValue(p, controllerKey + ".left");
         int right = AppUtils.getIntValue(p, controllerKey + ".right");
         KeyboardController kc = new KeyboardController(up, down, left, right);
         c = kc;
       } else if (CONTROLLER_REPLAY.equals(p.getProperty(controllerKey))) {
         // ReplayController
-        String file = p.getProperty(controllerKey + ".file");
+        String replayFile = p.getProperty(controllerKey + ".file");
 
-        ReplayController rc = new ReplayController(file);
+        ReplayController rc = new ReplayController(replayFile);
         c = rc;
+      } else {
+        throw new ServiceException("unknown value: " + controllerKey + "="
+            + p.getProperty(controllerKey));
       }
 
       Car car = new Car(game, id, model, c);
@@ -147,6 +152,10 @@ public class Scenario {
 
   public TerrainSetup getTerrain() {
     return terrain;
+  }
+
+  public int getLaps() {
+    return laps;
   }
 
 }

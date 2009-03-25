@@ -10,10 +10,11 @@ import java.util.List;
 import neurocars.Game;
 import neurocars.controllers.Controller;
 import neurocars.controllers.KeyboardController;
+import neurocars.controllers.ReplayController;
 import neurocars.utils.AppUtils;
 import neurocars.utils.ServiceException;
 import neurocars.valueobj.CarSetup;
-import neurocars.valueobj.CarStateDescription;
+import neurocars.valueobj.NeuralNetworkInput;
 import neurocars.valueobj.WayPoint;
 
 /**
@@ -34,13 +35,18 @@ public class Car extends Entity {
   private double speed; // rychlost motoru
 
   private int nextWayPoint;
-
   private double nextWayPointDistance;
+
   private BufferedWriter replayLog;
 
+  // cislo aktualniho kole
   private int lap;
+  // cas zacatku kola
   private long lapStartTime;
+  // casy za jednotliva kola
   private List<Long> lapTimes = new ArrayList<Long>();
+  // dokoncil zavod
+  private boolean finished = false;
 
   public Car(Game game, String id, CarSetup setup, Controller controller) {
     super(game);
@@ -66,32 +72,32 @@ public class Car extends Entity {
    * @throws ServiceException
    */
   public void processInput() throws ServiceException {
-    controller.next();
-    // zrychleni
-    if (controller.accelerate()) {
-      double speed = getSpeed();
-      speed += setup.getEnginePower();
-      if (speed > setup.getMaxForwardSpeed()) {
-        speed = setup.getMaxForwardSpeed();
-      }
-      setSpeed(speed);
+    if (controller instanceof ReplayController) {
+      controller.next();
     }
 
-    // brzda
-    if (controller.brake()) {
-      double speed = getSpeed();
-      speed -= setup.getBrakePower();
-      if (speed < -setup.getMaxBackwardSpeed()) {
-        speed = -setup.getMaxBackwardSpeed();
+    if (finished) {
+      // jestli jsem dojel, tak uz jenom zabrzdim
+      this.brake();
+    } else {
+      // jinak muzu jeste jet
+
+      // zrychleni
+      if (controller.accelerate()) {
+        this.accelerate();
       }
-      setSpeed(speed);
+
+      // brzda
+      if (controller.brake()) {
+        this.brake();
+      }
     }
 
     // zataceni
     if (controller.right() ^ controller.left()) { // XOR
       double steeringWheel = getSteeringWheel();
       double k = (controller.right() ? +1 : -1);
-      steeringWheel += k * setup.getSteeringPower() / speed;
+      steeringWheel += k * setup.getSteeringPower() / (speed > 1 ? speed : 1);
       if (steeringWheel > 1.0) {
         steeringWheel = 1.0;
       }
@@ -112,6 +118,28 @@ public class Car extends Entity {
       }
       setSteeringWheel(steeringWheel);
     }
+  }
+
+  public boolean checkCollision(Car opponent) {
+    final int size = 20;
+    if (Math.abs(opponent.getX() - x) > size) {
+      return false;
+    }
+    if (Math.abs(opponent.getY() - y) > size) {
+      return false;
+    }
+    return true;
+  }
+
+  public void collision(Car opponent) {
+    double vx = opponent.getVx();
+    double vy = opponent.getVy();
+
+    opponent.setVx(this.vx);
+    opponent.setVy(this.vy);
+
+    this.setVx(vx);
+    this.setVy(vy);
   }
 
   /**
@@ -151,6 +179,30 @@ public class Car extends Entity {
     this.updateWayPoint();
   }
 
+  /**
+   * Zrychleni
+   */
+  private void accelerate() {
+    double speed = getSpeed();
+    speed += setup.getEnginePower();
+    if (speed > setup.getMaxForwardSpeed()) {
+      speed = setup.getMaxForwardSpeed();
+    }
+    setSpeed(speed);
+  }
+
+  /**
+   * Brzda
+   */
+  private void brake() {
+    double speed = getSpeed();
+    speed -= setup.getBrakePower();
+    if (speed < -setup.getMaxBackwardSpeed()) {
+      speed = -setup.getMaxBackwardSpeed();
+    }
+    setSpeed(speed);
+  }
+
   public void openReplayLog() throws ServiceException {
     if (!(controller instanceof KeyboardController)) {
       return;
@@ -167,15 +219,12 @@ public class Car extends Entity {
   }
 
   public void writeReplayEntry() throws ServiceException {
-    if (!(controller instanceof KeyboardController)) {
-      return;
-    }
     if (replayLog == null) {
       throw new ServiceException("Log not opened!");
     }
     try {
       replayLog.write(controller.toString() + ";"
-          + getCarStateDescription().toString());
+          + getNeuralNetworkInput().toString());
       replayLog.newLine();
     } catch (IOException e) {
       throw new ServiceException(e);
@@ -198,7 +247,7 @@ public class Car extends Entity {
   /**
    * Prepocita informace o nasledujicim bodu trasy
    */
-  public void updateWayPoint() {
+  private void updateWayPoint() {
     WayPoint wayPoint = game.getTrack().getWayPoints().get(nextWayPoint);
 
     // prepocitani vzdalenosti
@@ -216,19 +265,31 @@ public class Car extends Entity {
           lapTimes.add(game.getCycleCounter() - lapStartTime);
         }
         lapStartTime = game.getCycleCounter();
+        if (lap > game.getLaps()) {
+          finished = true;
+          game.checkCarsFinished();
+        }
       }
     }
   }
 
-  public CarStateDescription getCarStateDescription() {
-    CarStateDescription d = new CarStateDescription();
-
-    // WayPoint wayPoint =
-    // getGame().getTrack().getWayPoints().get(nextWayPoint);
+  public NeuralNetworkInput getNeuralNetworkInput() {
+    NeuralNetworkInput d = new NeuralNetworkInput();
 
     d.setSpeed(speed);
     d.setSteeringWheel(steeringWheel);
-    // d.setDistanceToNextPoint(new double[] { nextWayPointDistance });
+    double[] wayPointDistance = new double[2];
+    double[] wayPointAngle = new double[2];
+    List<WayPoint> wayPoints = game.getTrack().getWayPoints();
+
+    for (int i = 0; i < wayPointDistance.length; i++) {
+      WayPoint wp = wayPoints.get((nextWayPoint + i) % wayPoints.size());
+      wayPointAngle[i] = angle - Math.atan2(wp.getY() - y, wp.getX() - x);
+      wayPointDistance[i] = Math.sqrt(Math.pow(wp.getX() - x, 2)
+          + Math.pow(wp.getY() - y, 2));
+    }
+    d.setWayPointAngle(wayPointAngle);
+    d.setWayPointDistance(wayPointDistance);
 
     return d;
   }
@@ -290,6 +351,10 @@ public class Car extends Entity {
 
   public List<Long> getLapTimes() {
     return lapTimes;
+  }
+
+  public boolean isFinished() {
+    return finished;
   }
 
 }

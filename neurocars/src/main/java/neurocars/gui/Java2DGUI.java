@@ -161,10 +161,10 @@ public class Java2DGUI implements IGUI {
       int x2 = (int) (c.getX() - c.getVx() + 30);
       int y2 = (int) (c.getY() - c.getVy() + 30);
       g.drawImage(background, x1, y1, x2, y2, x1, y1, x2, y2, null);
-
-      // g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-      // RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
+
+    // g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+    // RenderingHints.VALUE_ANTIALIAS_ON);
 
     // potom vykreslime auticka ...
     for (CarSprite cs : carSprites) {
