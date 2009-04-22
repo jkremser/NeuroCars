@@ -1,6 +1,10 @@
 package neurocars;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -61,7 +65,10 @@ public class Game {
    * @throws ServiceException
    */
   public Game(String scenarioFile) throws ServiceException {
+	    System.out.println(scenarioFile);
+
     Scenario sc = new Scenario(this, scenarioFile);
+    
 
     this.xScreenSize = sc.getXScreenSize();
     this.yScreenSize = sc.getYScreenSize();
@@ -242,9 +249,16 @@ public class Game {
     return laps;
   }
 
-  public static void main(final String[] args) {
+  public static void main(final String[] args) throws FileNotFoundException {
     try {
-      Game g = new Game("scenario/scenario1.properties");
+    	
+      Game g = null;
+	try {
+		g = new Game(new File(".").getCanonicalPath() + "/src/main/resources/scenario/scenario1.properties");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
       g.start();
     } catch (ServiceException e) {
       System.err.println("Fatal application exception: " + e.getMessage());

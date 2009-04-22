@@ -1,6 +1,7 @@
 package neurocars.controllers;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,10 +26,11 @@ public class ReplayController extends Controller {
   public ReplayController(String replayFile) throws ServiceException {
     super();
     try {
-      replay = new BufferedReader(new FileReader(replayFile));
-    } catch (FileNotFoundException e) {
-      throw new ServiceException(e);
-    }
+		replay = new BufferedReader(new FileReader(/*new File(".").getCanonicalPath() + "/src/main/resources/scenario/" + */replayFile));
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
 
   /*
