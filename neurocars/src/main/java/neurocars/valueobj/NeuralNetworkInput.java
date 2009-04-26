@@ -12,7 +12,7 @@ import java.util.Locale;
  */
 public class NeuralNetworkInput {
 
-  private final DecimalFormat df = new DecimalFormat("0.0##",
+  private final DecimalFormat df = new DecimalFormat("0.0####",
       new DecimalFormatSymbols(Locale.US));
 
   // rychlost auta
@@ -24,6 +24,8 @@ public class NeuralNetworkInput {
   private double wayPointAngle[];
   // vzdalenost k dalsim bodum cesty
   private double wayPointDistance[];
+  // jak daleko musim projet od dalsich bodu trasy (velikost way-pointu)
+  private int wayPointSize[];
 
   // uhel k nejblizsimu oponentovi
   private double angleToOpponent;
@@ -35,6 +37,9 @@ public class NeuralNetworkInput {
   // rychlost oponenta
   private double opponentVelocity;
 
+  /**
+   * Zkonstruuje zaznam pro replay/vstup pro neuronovou sit
+   */
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append(df.format(speed) + ";");
@@ -42,6 +47,7 @@ public class NeuralNetworkInput {
     for (int i = 0; i < wayPointDistance.length; i++) {
       sb.append(df.format(wayPointDistance[i]) + ";");
       sb.append(df.format(wayPointAngle[i]) + ";");
+      sb.append(df.format(wayPointSize[i]) + ";");
     }
 
     return sb.toString();
@@ -109,6 +115,14 @@ public class NeuralNetworkInput {
 
   public void setOpponentVelocity(double opponentVelocity) {
     this.opponentVelocity = opponentVelocity;
+  }
+
+  public void setWayPointSize(int wayPointSize[]) {
+    this.wayPointSize = wayPointSize;
+  }
+
+  public int[] getWayPointSize() {
+    return wayPointSize;
   }
 
 }

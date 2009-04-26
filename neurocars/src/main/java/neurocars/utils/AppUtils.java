@@ -1,5 +1,9 @@
 package neurocars.utils;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -51,6 +55,10 @@ public class AppUtils {
 
   public static int getBooleanAsNumber(boolean b) {
     return b ? 1 : 0;
+  }
+
+  public static NumberFormat getNumberFormat() {
+    return new DecimalFormat("0.0#####", new DecimalFormatSymbols(Locale.US));
   }
 
 }

@@ -1,11 +1,8 @@
 package neurocars.valueobj;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import java.text.NumberFormat;
 
 import neurocars.utils.AppUtils;
-import neurocars.utils.ServiceException;
 
 /**
  * Konfigurace fyzikalnich parametru vozidla
@@ -23,63 +20,28 @@ public class CarSetup {
   private final double steeringPower;
   private final double turnRange;
 
-  public static final CarSetup STANDARD = new CarSetup(10, // mass
-      15, // maxForwardSpeed
-      0, // maxBackwardSpeed
-      0.3, // enginePower
-      0.5, // brakePower
-      20, // turnRange
-      0.03 // steeringSpeed
-  );
-
-  public static final CarSetup SLOW = new CarSetup(10, // mass
-      5, // maxForwardSpeed
-      0, // maxBackwardSpeed
-      0.1, // enginePower
-      0.15, // brakePower
-      20, // turnRange
-      0.03 // steeringSpeed
-  );
-
-  /**
-   * Nacte konfiguraci ze souboru
-   * 
-   * @param file
-   * @throws ServiceException
-   */
-  public CarSetup(String file) throws ServiceException {
-    Properties p = new Properties();
-    InputStream is = getClass().getClassLoader().getResourceAsStream(file);
-    if (is == null) {
-      throw new ServiceException("File not found: " + file);
-    }
-    try {
-      p.load(is);
-
-      this.mass = AppUtils.getDoubleValue(p, "mass");
-      this.maxForwardSpeed = AppUtils.getDoubleValue(p, "maxForwardSpeed");
-      this.maxBackwardSpeed = AppUtils.getDoubleValue(p, "maxBackwardSpeed");
-      this.turnRange = AppUtils.DEGREE
-          * AppUtils.getDoubleValue(p, "turnRange");
-      this.brakePower = AppUtils.getDoubleValue(p, "brakePower");
-      this.enginePower = AppUtils.getDoubleValue(p, "enginePower");
-      this.steeringPower = AppUtils.getDoubleValue(p, "steeringPower");
-    } catch (IOException e) {
-      throw new ServiceException(e);
-    }
-  }
-
-  public CarSetup(double mass, double maxForwardVelocity,
-      double maxBackwardVelocity, double enginePower, double brakePower,
-      double turnRange, double steeringSpeed) {
+  public CarSetup(double mass, double maxForwardSpeed, double maxBackwardSpeed,
+      double enginePower, double brakePower, double turnRange,
+      double steeringPower) {
     super();
     this.mass = mass;
-    this.maxForwardSpeed = maxForwardVelocity;
-    this.maxBackwardSpeed = maxBackwardVelocity;
-    this.turnRange = AppUtils.DEGREE * turnRange;
+    this.maxForwardSpeed = maxForwardSpeed;
+    this.maxBackwardSpeed = maxBackwardSpeed;
+    this.turnRange = turnRange;
     this.brakePower = brakePower;
     this.enginePower = enginePower;
-    this.steeringPower = steeringSpeed;
+    this.steeringPower = steeringPower;
+  }
+
+  public String toString() {
+    NumberFormat nf = AppUtils.getNumberFormat();
+
+    return "[mass=" + nf.format(mass) + ";maxForwardSpeed="
+        + nf.format(maxForwardSpeed) + ";maxBackwardSpeed="
+        + nf.format(maxBackwardSpeed) + ";turnRange=" + nf.format(turnRange)
+        + ";brakePower=" + nf.format(brakePower) + ";enginePower="
+        + nf.format(enginePower) + ";steeringPower=" + nf.format(steeringPower)
+        + "]";
   }
 
   public double getMass() {

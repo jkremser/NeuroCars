@@ -11,10 +11,12 @@ import java.util.List;
  */
 public class Track {
 
-  private List<WayPoint> wayPoints = new ArrayList<WayPoint>();
+  private final String name;
+  private final List<WayPoint> wayPoints = new ArrayList<WayPoint>();
 
-  public Track() {
+  public Track(String name) {
     super();
+    this.name = name;
   }
 
   public void addWayPoint(int x, int y, int size) {
@@ -24,4 +26,9 @@ public class Track {
   public List<WayPoint> getWayPoints() {
     return wayPoints;
   }
+
+  public String getName() {
+    return name;
+  }
+
 }

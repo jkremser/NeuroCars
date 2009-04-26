@@ -9,7 +9,6 @@ import java.util.List;
 
 import neurocars.Game;
 import neurocars.controllers.Controller;
-import neurocars.controllers.KeyboardController;
 import neurocars.controllers.ReplayController;
 import neurocars.utils.AppUtils;
 import neurocars.utils.ServiceException;
@@ -37,6 +36,7 @@ public class Car extends Entity {
   private int nextWayPoint;
   private double nextWayPointDistance;
 
+  private final boolean saveReplay;
   private BufferedWriter replayLog;
 
   // cislo aktualniho kole
@@ -48,7 +48,8 @@ public class Car extends Entity {
   // dokoncil zavod
   private boolean finished = false;
 
-  public Car(Game game, String id, CarSetup setup, Controller controller) {
+  public Car(Game game, String id, CarSetup setup, Controller controller,
+      boolean saveReplay) {
     super(game);
 
     if (id == null) {
@@ -64,6 +65,7 @@ public class Car extends Entity {
     this.id = id;
     this.setup = setup;
     this.controller = controller;
+    this.saveReplay = saveReplay;
   }
 
   /**
@@ -204,7 +206,7 @@ public class Car extends Entity {
   }
 
   public void openReplayLog() throws ServiceException {
-    if (!(controller instanceof KeyboardController)) {
+    if (!saveReplay) {
       return;
     }
     if (replayLog != null) {
@@ -213,6 +215,7 @@ public class Car extends Entity {
     try {
       File logFile = new File(id + "_replay.txt");
       replayLog = new BufferedWriter(new FileWriter(logFile));
+      replayLog.write(getSetup().toString() + "\n");
     } catch (IOException e) {
       throw new ServiceException(e);
     }
@@ -232,7 +235,7 @@ public class Car extends Entity {
   }
 
   public void closeReplayLog() throws ServiceException {
-    if (!(controller instanceof KeyboardController)) {
+    if (!saveReplay) {
       return;
     }
     try {
@@ -280,6 +283,7 @@ public class Car extends Entity {
     d.setSteeringWheel(steeringWheel);
     double[] wayPointDistance = new double[2];
     double[] wayPointAngle = new double[2];
+    int[] wayPointSize = new int[2];
     List<WayPoint> wayPoints = game.getTrack().getWayPoints();
 
     for (int i = 0; i < wayPointDistance.length; i++) {
@@ -287,9 +291,11 @@ public class Car extends Entity {
       wayPointAngle[i] = angle - Math.atan2(wp.getY() - y, wp.getX() - x);
       wayPointDistance[i] = Math.sqrt(Math.pow(wp.getX() - x, 2)
           + Math.pow(wp.getY() - y, 2));
+      wayPointSize[i] = wp.getSize();
     }
     d.setWayPointAngle(wayPointAngle);
     d.setWayPointDistance(wayPointDistance);
+    d.setWayPointSize(wayPointSize);
 
     return d;
   }
@@ -306,7 +312,7 @@ public class Car extends Entity {
     return angle;
   }
 
-  private void setAngle(double angle) {
+  public void setAngle(double angle) {
     this.angle = angle;
   }
 
@@ -355,6 +361,10 @@ public class Car extends Entity {
 
   public boolean isFinished() {
     return finished;
+  }
+
+  public boolean isSaveReplay() {
+    return saveReplay;
   }
 
 }

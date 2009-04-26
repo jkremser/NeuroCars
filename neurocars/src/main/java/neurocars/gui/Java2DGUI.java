@@ -38,6 +38,9 @@ public class Java2DGUI implements IGUI {
 
   private static final Logger log = Logger.getLogger(Java2DGUI.class);
 
+  // delka herniho cyklu v ms
+  private static final int CYCLE_DELAY = 70;
+
   // instance hry
   private final Game game;
 
@@ -197,13 +200,16 @@ public class Java2DGUI implements IGUI {
     g.setColor(Color.BLACK);
     g.fillRect(0, 0, game.getXScreenSize(), game.getYScreenSize());
 
-    for (int p = 0; p < track.getWayPoints().size(); p++) {
-      WayPoint point = track.getWayPoints().get(p);
-      g.setColor(Color.WHITE);
-      g.drawOval((int) (point.getX() - point.getSize() / 2),
-          (int) (point.getY() - point.getSize() / 2), point.getSize(),
-          point.getSize());
-      this.drawCentered(g, "" + p, (int) point.getX(), (int) point.getY());
+    for (int p = 0; p < track.getWayPoints().size() + 1; p++) {
+      WayPoint point = track.getWayPoints()
+          .get(p % track.getWayPoints().size());
+      if (p < track.getWayPoints().size()) {
+        g.setColor(Color.WHITE);
+        g.drawOval((int) (point.getX() - point.getSize() / 2),
+            (int) (point.getY() - point.getSize() / 2), point.getSize(),
+            point.getSize());
+        this.drawCentered(g, "" + p, (int) point.getX(), (int) point.getY());
+      }
 
       if (p > 0) {
         g.setColor(Color.DARK_GRAY);
@@ -350,6 +356,10 @@ public class Java2DGUI implements IGUI {
       // System.exit(0);
       // }
     }
+  }
+
+  public int getCycleDelay() {
+    return CYCLE_DELAY;
   }
 
 }

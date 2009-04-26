@@ -1,14 +1,11 @@
 package neurocars.gui;
 
-import neurocars.Game;
 import neurocars.utils.ServiceException;
 
 public class NoGUI implements IGUI {
 
-  // private final Game game;
-
-  public NoGUI(Game game) {
-    // this.game = game;
+  public NoGUI() {
+    super();
   }
 
   public boolean[] getKeyboard() {
@@ -20,7 +17,10 @@ public class NoGUI implements IGUI {
   }
 
   public void refresh() {
+  }
 
+  public int getCycleDelay() {
+    return 0;
   }
 
 }
