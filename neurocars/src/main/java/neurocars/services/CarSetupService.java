@@ -55,7 +55,6 @@ public class CarSetupService extends ServiceBase {
 
       CarSetup s = new CarSetup(mass, maxForwardSpeed, maxBackwardSpeed,
           enginePower, brakePower, turnRange, steeringPower);
-      System.out.println(s);
 
       return s;
     } catch (IOException e) {

@@ -16,6 +16,8 @@ import neurocars.valueobj.CarSetup;
 import neurocars.valueobj.NeuralNetworkInput;
 import neurocars.valueobj.WayPoint;
 
+import org.apache.commons.math.util.MathUtils;
+
 /**
  * API auta
  * 
@@ -25,7 +27,7 @@ import neurocars.valueobj.WayPoint;
 public class Car extends Entity {
 
   private final String id;
-  private final Controller controller;
+  private Controller controller;
   private final CarSetup setup;
 
   private double angle; // uhel natoceni auta - rad
@@ -149,7 +151,7 @@ public class Car extends Entity {
    */
   public void updateLocation() {
     double angle = getAngle() + steeringWheel * setup.getTurnRange();
-    angle = AppUtils.normalizeAngle(angle);
+    angle = MathUtils.normalizeAngle(angle, Math.PI);
     setAngle(angle);
 
     double ddx = getSpeed() * Math.cos(angle);
@@ -281,21 +283,27 @@ public class Car extends Entity {
 
     d.setSpeed(speed);
     d.setSteeringWheel(steeringWheel);
-    double[] wayPointDistance = new double[2];
-    double[] wayPointAngle = new double[2];
-    int[] wayPointSize = new int[2];
+
     List<WayPoint> wayPoints = game.getTrack().getWayPoints();
 
-    for (int i = 0; i < wayPointDistance.length; i++) {
-      WayPoint wp = wayPoints.get((nextWayPoint + i) % wayPoints.size());
-      wayPointAngle[i] = angle - Math.atan2(wp.getY() - y, wp.getX() - x);
-      wayPointDistance[i] = Math.sqrt(Math.pow(wp.getX() - x, 2)
-          + Math.pow(wp.getY() - y, 2));
-      wayPointSize[i] = wp.getSize();
-    }
+    WayPoint wp1 = wayPoints.get(nextWayPoint);
+
+    double wayPointAngle = MathUtils.normalizeAngle(angle
+        - Math.atan2(wp1.getY() - y, wp1.getX() - x), 0);
+    double wayPointDistance = Math.sqrt(Math.pow(wp1.getX() - x, 2)
+        + Math.pow(wp1.getY() - y, 2));
+    int wayPointSize = wp1.getSize();
+
     d.setWayPointAngle(wayPointAngle);
     d.setWayPointDistance(wayPointDistance);
     d.setWayPointSize(wayPointSize);
+
+    WayPoint wp2 = wayPoints.get((nextWayPoint + 1)
+        % getGame().getTrack().getWayPoints().size());
+    double curveAngle = MathUtils.normalizeAngle(AppUtils.getAngle(wp1.getX(),
+        wp1.getY(), wp2.getX(), wp2.getY(), this.getX(), this.getY()), 0);
+
+    d.setCurveAngle(curveAngle);
 
     return d;
   }
@@ -365,6 +373,10 @@ public class Car extends Entity {
 
   public boolean isSaveReplay() {
     return saveReplay;
+  }
+
+  public void setController(Controller controller) {
+    this.controller = controller;
   }
 
 }

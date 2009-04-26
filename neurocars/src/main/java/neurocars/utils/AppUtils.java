@@ -21,22 +21,6 @@ public class AppUtils {
   /** Gravitacni zrychleni */
   public static final double G = 9.81;
 
-  /**
-   * Prevede uhel do intervalu [0 .. 2 * PI]
-   * 
-   * @param angle
-   * @return
-   */
-  public static double normalizeAngle(double angle) {
-    while (angle >= 2 * Math.PI) {
-      angle -= 2 * Math.PI;
-    }
-    while (angle < 0) {
-      angle += 2 * Math.PI;
-    }
-    return angle;
-  }
-
   public static double getDoubleValue(Properties p, String key)
       throws ServiceException {
     if (!p.containsKey(key)) {
@@ -61,4 +45,24 @@ public class AppUtils {
     return new DecimalFormat("0.0#####", new DecimalFormatSymbols(Locale.US));
   }
 
+  public static double getAngle(double x1, double y1, double x2, double y2,
+      double x3, double y3) {
+    double a = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    double b = Math.sqrt(Math.pow(x1 - x3, 2) + Math.pow(y1 - y3, 2));
+    double c = Math.sqrt(Math.pow(x2 - x3, 2) + Math.pow(y2 - y3, 2));
+
+    return getAngle(a, b, c);
+  }
+
+  /**
+   * Vypocita uhel protilehly strane c
+   * 
+   * @param a
+   * @param b
+   * @param c
+   * @return
+   */
+  public static double getAngle(double a, double b, double c) {
+    return Math.acos((a * a + b * b - c * c) / (2 * a * b));
+  }
 }

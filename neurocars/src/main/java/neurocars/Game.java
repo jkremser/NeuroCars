@@ -1,10 +1,10 @@
 package neurocars;
 
-import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 
+import neurocars.controllers.NeuroController;
 import neurocars.entities.Car;
 import neurocars.gui.IGUI;
 import neurocars.gui.NoGUI;
@@ -69,12 +69,28 @@ public class Game {
   }
 
   /**
+   * Pro testovani neuronove site ... nastavi neuronovou sit jako ovladac vsech
+   * aut
+   * 
+   * @param scenarioFile
+   * @param nc
+   * @throws ServiceException
+   */
+  public Game(String scenarioFile, NeuroController nc) throws ServiceException {
+    this(scenarioFile);
+
+    for (Car c : cars) {
+      c.setController(nc);
+      nc.setCar(c);
+    }
+  }
+
+  /**
    * Spusti hru
    * 
    * @throws ServiceException
    */
   public RaceResult[] run() throws ServiceException {
-    boolean[] keyboard = gui.getKeyboard();
     cycleCounter = 0;
 
     WayPoint start = getTrack().getWayPoints().get(0);
@@ -101,7 +117,7 @@ public class Game {
     long lastLoopTime = System.currentTimeMillis();
 
     try {
-      while (!keyboard[KeyEvent.VK_ESCAPE] && cycleCounter < finalCycle) {
+      while (!gui.isEscapePressed() && cycleCounter < finalCycle) {
         long delta = System.currentTimeMillis() - lastLoopTime;
         lastLoopTime = System.currentTimeMillis();
 

@@ -254,8 +254,8 @@ public class Java2DGUI implements IGUI {
     g.drawString(message, x - w / 2, y - h / 2);
   }
 
-  public boolean[] getKeyboard() {
-    return keyboard;
+  public boolean isEscapePressed() {
+    return keyboard[KeyEvent.VK_ESCAPE];
   }
 
   /**

@@ -1,5 +1,8 @@
 package neurocars.controllers;
 
+import neurocars.entities.Car;
+import neurocars.valueobj.NeuralNetworkOutput;
+
 /**
  * Ovladac vozidla prostrednictvim neuronove site
  * 
@@ -7,26 +10,37 @@ package neurocars.controllers;
  */
 public class NeuroController extends Controller {
 
-  // TODO
+  private Car car;
+  private NeuralNetworkOutput out;
 
   public void next() {
+    // NeuralNetworkInput in = car.getNeuralNetworkInput();
 
+    // this.out = ...
   }
 
   public boolean accelerate() {
-    return false;
+    return out.isAccelerate();
   }
 
   public boolean brake() {
-    return false;
+    return out.isBrake();
   }
 
   public boolean left() {
-    return false;
+    return out.isLeft();
   }
 
   public boolean right() {
-    return false;
+    return out.isRight();
+  }
+
+  public void setCar(Car car) {
+    this.car = car;
+  }
+
+  public Car getCar() {
+    return car;
   }
 
 }

@@ -8,10 +8,6 @@ public class NoGUI implements IGUI {
     super();
   }
 
-  public boolean[] getKeyboard() {
-    return null;
-  }
-
   public void init() throws ServiceException {
     System.out.println("Running without GUI...");
   }
@@ -21,6 +17,10 @@ public class NoGUI implements IGUI {
 
   public int getCycleDelay() {
     return 0;
+  }
+
+  public boolean isEscapePressed() {
+    return false;
   }
 
 }

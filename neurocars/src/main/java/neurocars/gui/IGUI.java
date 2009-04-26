@@ -16,13 +16,18 @@ public interface IGUI {
    */
   public void refresh();
 
-  public boolean[] getKeyboard();
-
   /**
    * Zpozdeni cyklu, aby byla hra hratelna ... u NoGUI je 0
    * 
    * @return
    */
   public int getCycleDelay();
+
+  /**
+   * Byla stisknuta klavesa escape - pro ukonceni hry
+   * 
+   * @return
+   */
+  public boolean isEscapePressed();
 
 }
