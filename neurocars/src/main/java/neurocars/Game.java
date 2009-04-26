@@ -11,6 +11,7 @@ import neurocars.gui.NoGUI;
 import neurocars.services.GUIService;
 import neurocars.utils.AppUtils;
 import neurocars.utils.ServiceException;
+import neurocars.valueobj.RaceResult;
 import neurocars.valueobj.Scenario;
 import neurocars.valueobj.TerrainSetup;
 import neurocars.valueobj.Track;
@@ -72,7 +73,7 @@ public class Game {
    * 
    * @throws ServiceException
    */
-  public double[][] run() throws ServiceException {
+  public RaceResult[] run() throws ServiceException {
     boolean[] keyboard = gui.getKeyboard();
     cycleCounter = 0;
 
@@ -118,12 +119,15 @@ public class Game {
 
           if (log.isDebugEnabled() && c.getId().endsWith("debug")
               && !(gui instanceof NoGUI)) {
-            statusMessage = "X=" + nf.format(c.getX()) + ";Y="
-                + nf.format(c.getY()) + ";speed=" + nf.format(c.getSpeed())
-                + ";angle=" + nf.format(c.getAngle()) + ";steeringWheel="
-                + nf.format(c.getSteeringWheel()) + ";nextWayPoint="
-                + c.getNextWayPoint() + ";lap=" + c.getLap() + ";lapTimes="
-                + c.getLapTimes() + ";cycleTime=" + delta;
+            // statusMessage = "X=" + nf.format(c.getX()) + ";Y="
+            // + nf.format(c.getY()) + ";speed=" + nf.format(c.getSpeed())
+            // + ";angle=" + nf.format(c.getAngle()) + ";steeringWheel="
+            // + nf.format(c.getSteeringWheel()) + ";nextWayPoint="
+            // + c.getNextWayPoint() + ";lap=" + c.getLap() + ";lapTimes="
+            // + c.getLapTimes() + ";cycleTime=" + delta;
+            statusMessage = "nextWayPoint=" + c.getNextWayPoint() + ";lap="
+                + c.getLap() + ";lapTimes=" + c.getLapTimes() + ";cycleTime="
+                + delta;
           }
         }
 
@@ -139,7 +143,7 @@ public class Game {
         cycleCounter++;
       }
 
-      double[][] results = this.getResults();
+      RaceResult[] results = this.getResults();
 
       this.printResults(results);
 
@@ -162,8 +166,8 @@ public class Game {
    * 
    * @return
    */
-  private double[][] getResults() {
-    double[][] results = new double[cars.size()][5];
+  private RaceResult[] getResults() {
+    RaceResult[] results = new RaceResult[cars.size()];
 
     for (int i = 0; i < cars.size(); i++) {
       Car c = cars.get(i);
@@ -171,12 +175,14 @@ public class Game {
       for (Long lap : c.getLapTimes()) {
         ds.addValue(lap);
       }
-      double[] stat = results[i];
-      stat[0] = ds.getN();
-      stat[1] = ds.getMax();
-      stat[2] = ds.getMin();
-      stat[3] = ds.getMean();
-      stat[4] = ds.getStandardDeviation();
+      RaceResult r = new RaceResult();
+      r.setLaps(ds.getN());
+      r.setTotal(ds.getSum());
+      r.setMax(ds.getMax());
+      r.setMin(ds.getMin());
+      r.setAvg(ds.getMean());
+      r.setStandardDeviation(ds.getStandardDeviation());
+      results[i] = r;
     }
 
     return results;
@@ -205,12 +211,14 @@ public class Game {
    * 
    * @param results
    */
-  public void printResults(double[][] results) {
+  public void printResults(RaceResult[] results) {
     for (int i = 0; i < results.length; i++) {
-      double[] stat = results[i];
-      System.out.println("Car #" + (i + 1) + ": laps=" + stat[0] + "; max="
-          + stat[1] + "; min=" + nf.format(stat[2]) + "; avg="
-          + nf.format(stat[3]) + "; sd=" + nf.format(stat[4]));
+      RaceResult r = results[i];
+      System.out.println("Car #" + (i + 1) + "[" + cars.get(i).getId()
+          + "]: laps=" + r.getLaps() + ";total=" + r.getTotal() + "; max="
+          + r.getMax() + "; min=" + r.getMin() + "; avg="
+          + nf.format(r.getAvg()) + "; sd="
+          + nf.format(r.getStandardDeviation()));
     }
   }
 
