@@ -28,6 +28,7 @@ import neurocars.entities.Car;
 import neurocars.gui.renderer.CarCircleRenderer;
 import neurocars.gui.renderer.ICarRenderer;
 import neurocars.gui.sprites.CarSprite;
+import neurocars.gui.sprites.ISprite;
 import neurocars.utils.ServiceException;
 import neurocars.valueobj.Track;
 import neurocars.valueobj.WayPoint;
@@ -55,13 +56,13 @@ public class Java2DGUI implements IGUI {
   private final boolean[] keyboard = new boolean[65535];
 
   private final Color[] playerColors = new Color[] { Color.WHITE, Color.BLUE,
-      Color.GREEN, Color.YELLOW, Color.RED };
+      Color.GREEN, Color.YELLOW, Color.RED, Color.MAGENTA, Color.ORANGE };
 
   // pozadi hraci plochy
   private BufferedImage background;
 
   // zasobarna aut
-  private Set<CarSprite> carSprites = new HashSet<CarSprite>();
+  private Set<ISprite> sprites = new HashSet<ISprite>();
 
   public Java2DGUI(Game game) {
     this.game = game;
@@ -142,7 +143,7 @@ public class Java2DGUI implements IGUI {
         KeyboardController kc = (KeyboardController) c.getController();
         kc.setKeyboard(keyboard);
       }
-      carSprites.add(new CarSprite(c, renderer, playerColors[color++]));
+      sprites.add(new CarSprite(c, renderer, playerColors[color++]));
     }
   }
 
@@ -155,22 +156,12 @@ public class Java2DGUI implements IGUI {
     Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 
     // napred vymazeme pozadi
-    for (CarSprite cs : carSprites) {
-      Car c = cs.getCar();
-
-      // TODO: velikost prekreslovaneho pole
-      int x1 = (int) (c.getX() - c.getVx() - 30);
-      int y1 = (int) (c.getY() - c.getVy() - 30);
-      int x2 = (int) (c.getX() - c.getVx() + 30);
-      int y2 = (int) (c.getY() - c.getVy() + 30);
-      g.drawImage(background, x1, y1, x2, y2, x1, y1, x2, y2, null);
+    for (ISprite cs : sprites) {
+      cs.erase(g, background);
     }
 
-    // g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-    // RenderingHints.VALUE_ANTIALIAS_ON);
-
     // potom vykreslime auticka ...
-    for (CarSprite cs : carSprites) {
+    for (ISprite cs : sprites) {
       cs.draw(g);
     }
 
@@ -182,7 +173,6 @@ public class Java2DGUI implements IGUI {
     // and flip the buffer over
     g.dispose();
     strategy.show();
-    // Toolkit.getDefaultToolkit().sync();
   }
 
   /**

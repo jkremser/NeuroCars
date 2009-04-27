@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Properties;
 
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Trida pomocnych metod na praci s uhly
@@ -43,6 +44,11 @@ public class AppUtils {
 
   public static NumberFormat getNumberFormat() {
     return new DecimalFormat("0.0#####", new DecimalFormatSymbols(Locale.US));
+  }
+
+  public static double getAngleDeviation(double x1, double y1, double x2,
+      double y2, double angle) {
+    return MathUtils.normalizeAngle(Math.atan2(y2 - y1, x2 - x1) - angle, 0);
   }
 
   public static double getAngle(double x1, double y1, double x2, double y2,

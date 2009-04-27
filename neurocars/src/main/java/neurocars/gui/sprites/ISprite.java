@@ -1,6 +1,7 @@
 package neurocars.gui.sprites;
 
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 /**
  * Swingove graficke rozhrani hernich objektu
@@ -11,5 +12,7 @@ import java.awt.Graphics;
 public interface ISprite {
 
   public void draw(Graphics g);
+
+  public void erase(Graphics g, BufferedImage background);
 
 }

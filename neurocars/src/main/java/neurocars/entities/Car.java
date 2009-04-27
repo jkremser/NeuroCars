@@ -288,8 +288,8 @@ public class Car extends Entity {
 
     WayPoint wp1 = wayPoints.get(nextWayPoint);
 
-    double wayPointAngle = MathUtils.normalizeAngle(angle
-        - Math.atan2(wp1.getY() - y, wp1.getX() - x), 0);
+    double wayPointAngle = AppUtils.getAngleDeviation(x, y, wp1.getX(),
+        wp1.getY(), angle);
     double wayPointDistance = Math.sqrt(Math.pow(wp1.getX() - x, 2)
         + Math.pow(wp1.getY() - y, 2));
     int wayPointSize = wp1.getSize();
@@ -300,8 +300,12 @@ public class Car extends Entity {
 
     WayPoint wp2 = wayPoints.get((nextWayPoint + 1)
         % getGame().getTrack().getWayPoints().size());
+    double wayPointAngle2 = AppUtils.getAngleDeviation(x, y, wp2.getX(),
+        wp2.getY(), angle);
     double curveAngle = MathUtils.normalizeAngle(AppUtils.getAngle(wp1.getX(),
         wp1.getY(), wp2.getX(), wp2.getY(), this.getX(), this.getY()), 0);
+    curveAngle *= Math.signum(MathUtils.normalizeAngle(wayPointAngle
+        - wayPointAngle2, 0));
 
     d.setCurveAngle(curveAngle);
 

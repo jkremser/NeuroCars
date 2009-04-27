@@ -25,7 +25,7 @@ public class CarImageRenderer implements ICarRenderer {
   public CarImageRenderer() throws ServiceException {
     try {
       InputStream is = this.getClass().getClassLoader().getResourceAsStream(
-          "car_small.png");
+          "car2_small.png");
       BufferedImage car = ImageIO.read(is);
       images[0] = car;
       for (int a = 1; a < 72; a++) {
@@ -52,5 +52,15 @@ public class CarImageRenderer implements ICarRenderer {
 
     g.drawImage(image, (int) (car.getX() - image.getWidth() / 2),
         (int) (car.getY() - image.getHeight() / 2), null);
+  }
+
+  public void erase(Graphics g, Car car, BufferedImage background) {
+    int w = images[0].getWidth() / 2 + 3;
+    int h = images[0].getHeight() / 2 + 3;
+    int x1 = (int) (car.getX() - car.getVx() - w);
+    int y1 = (int) (car.getY() - car.getVy() - h);
+    int x2 = (int) (car.getX() - car.getVx() + w);
+    int y2 = (int) (car.getY() - car.getVy() + h);
+    g.drawImage(background, x1, y1, x2, y2, x1, y1, x2, y2, null);
   }
 }
