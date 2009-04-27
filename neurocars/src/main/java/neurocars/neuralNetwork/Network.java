@@ -3,18 +3,18 @@ package neurocars.neuralNetwork;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Math;
 
 import neurocars.neuralNetwork.service.Constants;
+import neurocars.neuralNetwork.service.InputManager;
 
 public class Network {
 	
 	private static double DEFAULT_LEARNING_CONSTANT = 0.1;
 	
-	//input data
-	private File inputFile;
-	private int actualRow; //prave zpracovany radek v souboru
-	private int numberOfRows;
+	//data
 	private File outputFile; //tam se serializuje naucena sit
+	private InputManager inputManager;
 	
 	//network
 	private int inputSize;
@@ -25,15 +25,15 @@ public class Network {
 	private List<HiddenLayer> hiddenLayers;
 	private OutputLayer outputLayer;
 	
+	
 	//other
 	private boolean learningMode = true;
 	
 
 	
-	public Network(File inputDataFile, File outputFile, int inputSize, int outputSize, int hiddenLayersNumber, int hiddenLayerSize,double learningConstant){
-		this.inputFile = inputDataFile;
+	public Network(File trainFile, File testFile, File outputFile, int inputSize, int outputSize, int hiddenLayersNumber, int hiddenLayerSize,double learningConstant){
+		inputManager = new InputManager(trainFile, testFile);
 		this.outputFile = outputFile;
-		actualRow = -1;
 		this.inputSize = inputSize;
 		this.outputSize = outputSize;
 		this.hiddenLayersNumber = hiddenLayersNumber;
@@ -41,34 +41,7 @@ public class Network {
 		Constants.setLearningConstant(learningConstant);
 	}
 	
-	public Network(File inputDataFile, File outputFile, int inputSize, int outputSize, int hiddenLayersNumber, int hiddenLayerSize){
-		this(inputDataFile,outputFile, inputSize,outputSize,hiddenLayersNumber,hiddenLayerSize, DEFAULT_LEARNING_CONSTANT);
-	}
-	
-	
-	
-	/**
-	 * Otevre vstupni soubor, zjisti pocet radku a ulozi do numberOfRows
-	 */
-	private void initInputFile(){}
-	
-	/**
-	 * Nastavi ukazatel na novy radek, aby se mohlo prochazet znova
-	 */
-	private void resetInputFile(){}
-	
-	private void closeInputFile(){}
-	
-	/**
-	 * @return dalsi DataItem nebo null, pokud je konec souboru
-	 */
-	private DataItem getNextRow(){
-		//actualRow++;
-		//learningDataFile je otevreny, nacti radek actualRow
-		//preved na DataItem a vrat
-		return null;
-	}
-	
+		
 	/**
 	 * Vytvori samotnou sit
 	 */
@@ -138,18 +111,18 @@ public class Network {
 	 * Spusti uceni
 	 */
 	public void learn(){
-		initInputFile();
+		inputManager.initTrainFile();
 		initNetwork();
 		DataItem item;
 		while(!endConditionFulfilled()){
-			resetInputFile();
-		    while((item=getNextRow())!= null){
+			inputManager.resetTrainFile();
+		    while((item=inputManager.getNextTrainItem())!= null){
 		    	processInput(item);
 		    	propagateError(item);
 		    	adjustWeights();
 		    }
 		}
-		closeInputFile();
+		inputManager.closeTrainFile();
 		serializeNetwork();
 		learningMode = false;
 	}
@@ -205,6 +178,28 @@ public class Network {
 		//TODO
 		return true;
 	}
+	
+	/**
+	 * Spocita celkova chyba na testovacich datech. Metodu neni vhodne pouzivat,
+	 * pokud chcemem chybu urcit rovnou z trenovacich dat. V takovem pripade by se 
+	 * data prochazela dvakrat. 
+	 * Vhodnejsi by bylo spocitat chybu kazde iterace a pricist do promenne.
+	 * @return celkova chyba
+	 */
+	public double computeTotalError(){
+		inputManager.initTrainFile();
+		double error = 0;
+		DataItem item;
+		while((item=inputManager.getNextTestItem())!= null){
+	    	processInput(item);
+	    	for (int i=0; i<outputSize; i++){
+	    		OutputNode node = outputLayer.getNode(i);
+	    		error += Math.pow(item.getRequiredOutput(i) - node.getOutput(),2);
+	    	}
+	    }
+		return error;
+	}
+	
 	
 	/**
 	 * inicializuje inputWeightedSum vsech hidden a output neuronu na 0
