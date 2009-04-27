@@ -18,4 +18,5 @@ public class InputLayer {
 		return nodes.get(index);
 	}
 	
+		
 }

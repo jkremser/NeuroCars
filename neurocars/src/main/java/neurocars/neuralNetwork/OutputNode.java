@@ -25,12 +25,15 @@ public class OutputNode {
 		this.output = output;
 	}
 	
+	/**
+	 * Vypocita svoji chybu
+	 * @param requiredOutput hodnota pozadovaneho vstupu
+	 */
+	public void computeError(double requiredOutput){
+		error = output * (1-output) * (requiredOutput - output);
+	}
 	public double getError(){
 		return error;
-	}
-	
-	public void setError(double error){
-		this.error = error;
 	}
 
 	public void computeOutput() {

@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import neurocars.neuralNetwork.service.Constants;
+
 public class Network {
 	
 	private static double DEFAULT_LEARNING_CONSTANT = 0.1;
@@ -25,7 +27,7 @@ public class Network {
 	
 	//other
 	private boolean learningMode = true;
-	private double learningConstant = 0.1;
+	
 
 	
 	public Network(File inputDataFile, File outputFile, int inputSize, int outputSize, int hiddenLayersNumber, int hiddenLayerSize,double learningConstant){
@@ -36,7 +38,7 @@ public class Network {
 		this.outputSize = outputSize;
 		this.hiddenLayersNumber = hiddenLayersNumber;
 		this.hiddenLayerSize = hiddenLayerSize;
-		this.learningConstant = learningConstant;
+		Constants.setLearningConstant(learningConstant);
 	}
 	
 	public Network(File inputDataFile, File outputFile, int inputSize, int outputSize, int hiddenLayersNumber, int hiddenLayerSize){
@@ -143,7 +145,8 @@ public class Network {
 			resetInputFile();
 		    while((item=getNextRow())!= null){
 		    	processInput(item);
-		    	BackPropagation(item);	
+		    	propagateError(item);
+		    	adjustWeights();
 		    }
 		}
 		closeInputFile();
@@ -153,12 +156,36 @@ public class Network {
 	
 	
 	/**
-	 * 
+	 * Propagace chyby odspodu. Nejprve vystupni vrstva a pak skryte vrsvy v obracenem poradi
+	 * Vstupni vrstva samozrejme chybovou hodnotu nema, ta jen predava vstupy
 	 * @param item
 	 */
-	private void BackPropagation(DataItem item) {
-		// TODO Auto-generated method stub
-		
+	private void propagateError(DataItem item) {
+		for(int i=0; i<outputSize; i++){
+			outputLayer.getNode(i).computeError(item.getRequiredOutput(i));
+		}
+		for(int i = hiddenLayers.size()-1; i >=0; i--) {
+			HiddenLayer layer = hiddenLayers.get(i);
+			for(int j = 0; j<hiddenLayerSize; j++){
+				layer.getNode(j).computeError();
+			}
+		}
+	}
+	
+	/**
+	 * Zmeni se vahy podle jednotlivych chyb.
+	 * Vahu si pamatuje vzdy PREDCHOZI vrstva, proto volame jen pro input a hidden
+	 */
+	public void adjustWeights(){
+		for(int i=0; i<inputSize; i++){
+			inputLayer.getNode(i).adjustWeights();
+		}
+		for(int i=0; i< hiddenLayers.size(); i++){
+			HiddenLayer layer = hiddenLayers.get(i);
+			for(int j = 0; j<hiddenLayerSize; j++){
+				layer.getNode(j).adjustWeights();
+			}
+		}
 	}
 
 	/**
@@ -181,6 +208,8 @@ public class Network {
 	
 	/**
 	 * inicializuje inputWeightedSum vsech hidden a output neuronu na 0
+	 * je to proto, ze vstup pro sigmoidalni fci se "scita" pomoci addWeightedInput() metod 
+	 * a proto je treba ho pred dalsi iteraci vynulovat
 	 */
 	private void clearWeightedInputSums(){
 		for(int i = 0; i< hiddenLayersNumber; i++){

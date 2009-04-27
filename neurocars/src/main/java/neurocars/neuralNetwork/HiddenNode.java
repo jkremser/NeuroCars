@@ -2,6 +2,7 @@ package neurocars.neuralNetwork;
 
 import java.util.List;
 
+import neurocars.neuralNetwork.service.Constants;
 import neurocars.neuralNetwork.service.Transformer;
 import neurocars.neuralNetwork.service.WeightInitiator;
 
@@ -76,8 +77,18 @@ public class HiddenNode {
 		return error;
 	}
 	
-	public void setError(double error){
-		this.error = error;
+	public void computeError(){
+		double sum = 0;
+		if (inLastHiddenLayer){
+			for (int i =0; i<nextLayerONodes.size(); i++){
+				sum += nextLayerONodes.get(i).getError() * nextLayerONodesWeights.get(i);
+			}
+		}else{
+			for (int i =0; i<nextLayerHNodes.size(); i++){
+				sum += nextLayerHNodes.get(i).getError() * nextLayerHNodesWeights.get(i);
+			}
+		}
+		error = output * (output-1) * sum;
 	}
 	
     public void initWeightedInputSum(){
@@ -92,12 +103,16 @@ public class HiddenNode {
 		return output;
 	}
 	
-	public void setOutput(double output){
-		this.output = output;
-	}
+//	public void setOutput(double output){
+//		this.output = output;
+//	}
 
-	public void sendTransformedOutput() {
+	private void computeOutput() {
 		output = Transformer.sigmoidal(weightedInputSum);
+	}
+	
+	public void sendTransformedOutput() {
+		computeOutput();
 		if (inLastHiddenLayer){
 			for (int i = 0; i < nextLayerONodes.size(); i++){
 				nextLayerONodes.get(i).addWeightedInput(output*nextLayerONodesWeights.get(i));
@@ -107,11 +122,30 @@ public class HiddenNode {
 				nextLayerHNodes.get(i).addWeightedInput(output*nextLayerHNodesWeights.get(i));
 			}
 		}
-		
-		
-		
 	}
 
+	/**
+	 * Upravi vahu pro kazdy neuron nasledujici skryte/vystupni vrstvy 
+	 * (podle hodnoty jeho chyby a vstupu = vystup tohoto neuronu)
+	 */
+	public void adjustWeights() {
+		double deltaW;
+		double newW;
+		if(inLastHiddenLayer){
+			for(int i=0; i<nextLayerONodes.size(); i++){
+				deltaW = Constants.getLearningConstant() * nextLayerONodes.get(i).getError() * output;
+				newW = nextLayerONodesWeights.get(i) + deltaW;
+				nextLayerONodesWeights.set(i,newW);
+			}
+		}else{
+			for(int i=0; i<nextLayerHNodes.size(); i++){
+				deltaW = Constants.getLearningConstant() * nextLayerHNodes.get(i).getError() * output;
+				newW = nextLayerHNodesWeights.get(i) + deltaW;
+				nextLayerHNodesWeights.set(i,newW);
+		    }
+		
+	    }
+	}
 	
 	
 	

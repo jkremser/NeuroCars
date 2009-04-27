@@ -2,6 +2,7 @@ package neurocars.neuralNetwork;
 
 import java.util.List;
 
+import neurocars.neuralNetwork.service.Constants;
 import neurocars.neuralNetwork.service.WeightInitiator;
 
 public class InputNode {
@@ -62,6 +63,20 @@ public class InputNode {
 		//tady se to zbytecne pocita nekolikrat
 		//radsi predpocitat, pak ale vyresit inicializaci pro dalsi vstup!
 	   }
+	}
+
+	/**
+	 * Upravi vahu pro kazdy neuron nasledujici skryte vrstvy 
+	 * (podle hodnoty jeho chyby a vstupu do nej)
+	 */
+	public void adjustWeights() {
+		double deltaW;
+		double newW;
+		for(int i=0; i<nextLayerNodes.size(); i++){
+			deltaW = Constants.getLearningConstant() * nextLayerNodes.get(i).getError() * input;
+			newW = nextLayerNodesWeights.get(i) + deltaW;
+			nextLayerNodesWeights.set(i,newW);
+		}
 	}
 	
 	
