@@ -9,6 +9,11 @@ public class InputManager {
 	private File trainInput;
 	private File testInput;
 	
+	/**
+	 * Vytvori managera
+	 * @param trainInput
+	 * @param testInput soubor s testovacimi soubory. Pokud neexistuje, tak null
+	 */
 	public InputManager(File trainInput, File testInput){
 	  this.trainInput = trainInput;
 	  this.testInput = testInput;
