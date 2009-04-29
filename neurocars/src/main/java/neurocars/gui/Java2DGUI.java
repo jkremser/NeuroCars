@@ -46,7 +46,7 @@ public class Java2DGUI implements IGUI {
   private static final Logger log = Logger.getLogger(Java2DGUI.class);
 
   // delka herniho cyklu v ms
-  private static final int CYCLE_DELAY = 50;
+  private static final int CYCLE_DELAY = 55;
 
   // instance hry
   private final Game game;
@@ -193,12 +193,15 @@ public class Java2DGUI implements IGUI {
     Graphics2D g = (Graphics2D) background.getGraphics();
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON);
+
+    // cerne pozadi
     g.setColor(Color.BLACK);
     g.fillRect(0, 0, game.getXScreenSize(), game.getYScreenSize());
 
     for (int p = 0; p < track.getWayPoints().size() + 1; p++) {
       WayPoint point = track.getWayPoints()
           .get(p % track.getWayPoints().size());
+      // nakresli kolecko s cislem uprostred
       if (p < track.getWayPoints().size()) {
         g.setColor(Color.WHITE);
         g.drawOval((int) (point.getX() - point.getSize() / 2),
@@ -207,6 +210,7 @@ public class Java2DGUI implements IGUI {
         this.drawCentered(g, "" + p, (int) point.getX(), (int) point.getY());
       }
 
+      // nakresli caru do dalsiho bodu
       if (p > 0) {
         g.setColor(Color.DARK_GRAY);
         g.drawLine((int) track.getWayPoints().get(p - 1).getX(),
