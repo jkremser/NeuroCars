@@ -113,13 +113,9 @@ public class Game {
 
     gui.init();
 
-    // long startTime = System.currentTimeMillis();
-    long lastLoopTime = System.currentTimeMillis();
-
     try {
       while (!gui.isEscapePressed() && cycleCounter < finalCycle) {
-        long delta = System.currentTimeMillis() - lastLoopTime;
-        lastLoopTime = System.currentTimeMillis();
+        long loopBeginTime = System.currentTimeMillis();
 
         for (int i = 0; i < cars.size(); i++) {
           Car c = cars.get(i);
@@ -142,14 +138,15 @@ public class Game {
             // + c.getNextWayPoint() + ";lap=" + c.getLap() + ";lapTimes="
             // + c.getLapTimes() + ";cycleTime=" + delta;
             statusMessage = "nextWayPoint=" + c.getNextWayPoint() + ";lap="
-                + c.getLap() + ";lapTimes=" + c.getLapTimes() + ";cycleTime="
-                + delta;
+                + c.getLap() + ";lapTimes=" + c.getLapTimes();
           }
         }
 
         gui.refresh();
 
-        if (gui.getCycleDelay() > 0) {
+        long delta = System.currentTimeMillis() - loopBeginTime;
+
+        if (gui.getCycleDelay() > delta) {
           try {
             Thread.sleep(gui.getCycleDelay() - delta);
           } catch (Exception e) {

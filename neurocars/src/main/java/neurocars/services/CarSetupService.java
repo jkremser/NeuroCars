@@ -47,8 +47,7 @@ public class CarSetupService extends ServiceBase {
       double mass = AppUtils.getDoubleValue(p, "mass");
       double maxForwardSpeed = AppUtils.getDoubleValue(p, "maxForwardSpeed");
       double maxBackwardSpeed = AppUtils.getDoubleValue(p, "maxBackwardSpeed");
-      double turnRange = AppUtils.DEGREE
-          * AppUtils.getDoubleValue(p, "turnRange");
+      double turnRange = Math.toRadians(AppUtils.getDoubleValue(p, "turnRange"));
       double brakePower = AppUtils.getDoubleValue(p, "brakePower");
       double enginePower = AppUtils.getDoubleValue(p, "enginePower");
       double steeringPower = AppUtils.getDoubleValue(p, "steeringPower");

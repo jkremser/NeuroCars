@@ -35,12 +35,18 @@ import neurocars.valueobj.WayPoint;
 
 import org.apache.log4j.Logger;
 
+/**
+ * Java2d implementace GUI
+ * 
+ * @author Lukas Holcik
+ * 
+ */
 public class Java2DGUI implements IGUI {
 
   private static final Logger log = Logger.getLogger(Java2DGUI.class);
 
   // delka herniho cyklu v ms
-  private static final int CYCLE_DELAY = 70;
+  private static final int CYCLE_DELAY = 50;
 
   // instance hry
   private final Game game;

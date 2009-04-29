@@ -46,11 +46,32 @@ public class AppUtils {
     return new DecimalFormat("0.0#####", new DecimalFormatSymbols(Locale.US));
   }
 
+  /**
+   * Odchylka uhlu mezi dvema body od zadaneho uhlu
+   * 
+   * @param x1
+   * @param y1
+   * @param x2
+   * @param y2
+   * @param angle
+   * @return
+   */
   public static double getAngleDeviation(double x1, double y1, double x2,
       double y2, double angle) {
     return MathUtils.normalizeAngle(Math.atan2(y2 - y1, x2 - x1) - angle, 0);
   }
 
+  /**
+   * Uhel trojuhelnika ve vrcholu [x1,y1]
+   * 
+   * @param x1
+   * @param y1
+   * @param x2
+   * @param y2
+   * @param x3
+   * @param y3
+   * @return
+   */
   public static double getAngle(double x1, double y1, double x2, double y2,
       double x3, double y3) {
     double a = Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
