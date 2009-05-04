@@ -23,8 +23,6 @@ public class NeuralNetworkInput {
   private double wayPointAngle;
   // vzdalenost k dalsim bodum cesty
   private double wayPointDistance;
-  // jak daleko musim projet od dalsich bodu trasy (velikost way-pointu)
-  private int wayPointSize;
   // uhel v zatacce
   private double curveAngle;
 
@@ -37,7 +35,6 @@ public class NeuralNetworkInput {
     sb.append(df.format(steeringWheel) + ";");
     sb.append(df.format(wayPointDistance) + ";");
     sb.append(df.format(wayPointAngle) + ";");
-    sb.append(df.format(wayPointSize) + ";");
     sb.append(df.format(curveAngle) + ";");
 
     return sb.toString();
@@ -81,14 +78,6 @@ public class NeuralNetworkInput {
 
   public void setWayPointDistance(double wayPointDistance) {
     this.wayPointDistance = wayPointDistance;
-  }
-
-  public int getWayPointSize() {
-    return wayPointSize;
-  }
-
-  public void setWayPointSize(int wayPointSize) {
-    this.wayPointSize = wayPointSize;
   }
 
 }

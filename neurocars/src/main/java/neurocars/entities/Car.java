@@ -124,28 +124,6 @@ public class Car extends Entity {
     }
   }
 
-  public boolean checkCollision(Car opponent) {
-    final int size = 20;
-    if (Math.abs(opponent.getX() - x) > size) {
-      return false;
-    }
-    if (Math.abs(opponent.getY() - y) > size) {
-      return false;
-    }
-    return true;
-  }
-
-  public void collision(Car opponent) {
-    double vx = opponent.getVx();
-    double vy = opponent.getVy();
-
-    opponent.setVx(this.vx);
-    opponent.setVy(this.vy);
-
-    this.setVx(vx);
-    this.setVy(vy);
-  }
-
   /**
    * Prepocita rychlosti, souradnice, atd ...
    */
@@ -291,12 +269,11 @@ public class Car extends Entity {
     double wayPointAngle = AppUtils.getAngleDeviation(x, y, wp1.getX(),
         wp1.getY(), angle);
     double wayPointDistance = Math.sqrt(Math.pow(wp1.getX() - x, 2)
-        + Math.pow(wp1.getY() - y, 2));
-    int wayPointSize = wp1.getSize();
+        + Math.pow(wp1.getY() - y, 2))
+        - wp1.getSize();
 
     d.setWayPointAngle(wayPointAngle);
     d.setWayPointDistance(wayPointDistance);
-    d.setWayPointSize(wayPointSize);
 
     WayPoint wp2 = wayPoints.get((nextWayPoint + 1)
         % getGame().getTrack().getWayPoints().size());

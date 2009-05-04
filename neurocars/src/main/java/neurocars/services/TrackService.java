@@ -50,10 +50,11 @@ public class TrackService extends ServiceBase {
    */
   public void generateTrackFiles(String dir, String prefix, int sizeX,
       int sizeY, int wpSize, int length, int count) throws ServiceException {
+    final Random r = new Random(System.currentTimeMillis());
+
     for (int i = 0; i < count; i++) {
       Track track = new Track(prefix + "_" + sizeX + "x" + sizeY + "x" + length
           + "_" + (i + 1));
-      final Random r = new Random(System.currentTimeMillis());
 
       for (int k = 0; k < length; k = track.getWayPoints().size()) {
         WayPoint w = new WayPoint(r.nextInt(sizeX - 2 * wpSize) + wpSize,
@@ -129,9 +130,9 @@ public class TrackService extends ServiceBase {
   }
 
   public static void main(String[] args) throws ServiceException {
-    String dir = "./src/main/resources/tracks";
+    String dir = "./config/tracks";
     String prefix = "t";
-    getInstance().generateTrackFiles(dir, prefix, 1024, 768, 100, 8, 5);
+    getInstance().generateTrackFiles(dir, prefix, 1024, 768, 100, 8, 10);
   }
 
 }

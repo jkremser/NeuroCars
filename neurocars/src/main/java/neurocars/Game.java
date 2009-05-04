@@ -92,6 +92,7 @@ public class Game {
    */
   public RaceResult[] run() throws ServiceException {
     cycleCounter = 0;
+    statusMessage = getTrack().getName();
 
     WayPoint start = getTrack().getWayPoints().get(0);
     WayPoint next = getTrack().getWayPoints().get(1);
