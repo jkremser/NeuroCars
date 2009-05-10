@@ -11,11 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 import neurocars.neuralNetwork.DataItem;
+import neurocars.neuralNetwork.Network;
 
 public class InputManager {
 
-  public static final int INPUT_LENGTH = 6;
-  public static final int OUTPUT_LENGTH = 4;
   public static final int TRAIN_TEST_RATIO = 10;
 
   private File trainInput;
@@ -89,11 +88,11 @@ public class InputManager {
     if (from.size() <= which) {
       return null; // empty
     }
-    DataItem item = new DataItem(INPUT_LENGTH, OUTPUT_LENGTH);
+    DataItem item = new DataItem(Network.INPUT_SIZE, Network.OUTPUT_SIZE);
     int i = 0;
     for (String stringValue : from.get(which)) {
       try {
-        if (i < OUTPUT_LENGTH) {
+        if (i < Network.OUTPUT_SIZE) {
           item.addOutputValue(Double.parseDouble(stringValue));
         } else {
           item.addInputValue(Double.parseDouble(stringValue));

@@ -16,13 +16,17 @@ import neurocars.neuralNetwork.service.InputManager;
 
 public class Network implements Serializable {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 8306840890842813850L;
   // data
   private File outputFile; // tam se serializuje naucena sit
   private transient InputManager inputManager;
 
   // network
-  private static int INPUT_SIZE = 10; // TODO: nastavit spravne
-  private static int OUTPUT_SIZE = 4;
+  public static final int INPUT_SIZE = 6;
+  public static final int OUTPUT_SIZE = 4;
   private int hiddenLayersNumber;
   private int hiddenLayerSize;
   private InputLayer inputLayer;
@@ -30,7 +34,7 @@ public class Network implements Serializable {
   private OutputLayer outputLayer;
 
   // learning
-  private transient static double DEFAULT_LEARNING_CONSTANT = 0.1;
+  private transient static final double DEFAULT_LEARNING_CONSTANT = 0.1;
   private transient EndConditionType endCondition;
   private transient double trainError;
   private transient double tresholdError;
@@ -141,7 +145,7 @@ public class Network implements Serializable {
   /**
    * Vytvori samotnou sit
    */
-  private void initNetwork() {
+  public void initNetwork() {
     inputLayer = new InputLayer(INPUT_SIZE);
     hiddenLayers = new ArrayList<HiddenLayer>(1);
     HiddenLayer layer;
@@ -366,4 +370,121 @@ public class Network implements Serializable {
     return hiddenLayerSize;
   }
 
+  public File getOutputFile() {
+    return outputFile;
+  }
+
+  public void setOutputFile(File outputFile) {
+    this.outputFile = outputFile;
+  }
+
+  public InputManager getInputManager() {
+    return inputManager;
+  }
+
+  public void setInputManager(InputManager inputManager) {
+    this.inputManager = inputManager;
+  }
+
+  public int getHiddenLayersNumber() {
+    return hiddenLayersNumber;
+  }
+
+  public void setHiddenLayersNumber(int hiddenLayersNumber) {
+    this.hiddenLayersNumber = hiddenLayersNumber;
+  }
+
+  public InputLayer getInputLayer() {
+    return inputLayer;
+  }
+
+  public void setInputLayer(InputLayer inputLayer) {
+    this.inputLayer = inputLayer;
+  }
+
+  public List<HiddenLayer> getHiddenLayers() {
+    return hiddenLayers;
+  }
+
+  public void setHiddenLayers(List<HiddenLayer> hiddenLayers) {
+    this.hiddenLayers = hiddenLayers;
+  }
+
+  public OutputLayer getOutputLayer() {
+    return outputLayer;
+  }
+
+  public void setOutputLayer(OutputLayer outputLayer) {
+    this.outputLayer = outputLayer;
+  }
+
+  public EndConditionType getEndCondition() {
+    return endCondition;
+  }
+
+  public void setEndCondition(EndConditionType endCondition) {
+    this.endCondition = endCondition;
+  }
+
+  public double getTrainError() {
+    return trainError;
+  }
+
+  public void setTrainError(double trainError) {
+    this.trainError = trainError;
+  }
+
+  public double getTresholdError() {
+    return tresholdError;
+  }
+
+  public void setTresholdError(double tresholdError) {
+    this.tresholdError = tresholdError;
+  }
+
+  public int getMaxIterations() {
+    return maxIterations;
+  }
+
+  public void setMaxIterations(int maxIterations) {
+    this.maxIterations = maxIterations;
+  }
+
+  public int getIterations() {
+    return iterations;
+  }
+
+  public void setIterations(int iterations) {
+    this.iterations = iterations;
+  }
+
+  public boolean isLearningMode() {
+    return learningMode;
+  }
+
+  public void setLearningMode(boolean learningMode) {
+    this.learningMode = learningMode;
+  }
+
+  public void setHiddenLayerSize(int hiddenLayerSize) {
+    this.hiddenLayerSize = hiddenLayerSize;
+  }
+
+  public String toString() {
+    String retString = "NEURAL NETWORK\n\noutput file: "
+        + outputFile.getAbsolutePath();
+    retString += "\ninputManager: " + inputManager;
+    retString += "\nhiddenLayersNumber: " + hiddenLayersNumber;
+    retString += "\nhiddenLayerSize: " + hiddenLayerSize;
+    retString += "\ninputLayer: " + inputLayer;
+    retString += "\nhiddenLayers: " + hiddenLayers;
+    retString += "\noutputLayer: " + outputLayer;
+    retString += "\nendCondition: " + endCondition;
+    retString += "\ntrainError: " + trainError;
+    retString += "\ntresholdError: " + tresholdError;
+    retString += "\nmaxIterations: " + maxIterations;
+    retString += "\niterations: " + iterations;
+    retString += "\nlearningMode: " + learningMode;
+    return retString;
+  }
 }

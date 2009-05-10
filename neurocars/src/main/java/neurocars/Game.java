@@ -8,6 +8,7 @@ import neurocars.controllers.NeuroController;
 import neurocars.entities.Car;
 import neurocars.gui.IGUI;
 import neurocars.gui.NoGUI;
+import neurocars.neuralNetwork.MrsTeacher;
 import neurocars.services.GUIService;
 import neurocars.utils.AppUtils;
 import neurocars.utils.ServiceException;
@@ -280,8 +281,12 @@ public class Game {
     String scenario = (args.length == 1 ? args[0]
         : "./config/scenario/scenario-1player.properties");
     try {
-      Game g = new Game(scenario);
-      g.run();
+      if (args.length <= 1) {
+        Game g = new Game(scenario);
+        g.run();
+      } else {
+        new MrsTeacher(args).learn();
+      }
     } catch (Exception e) {
       System.err.println("Fatal application exception: " + e.getMessage());
       e.printStackTrace();
