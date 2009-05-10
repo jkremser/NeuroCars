@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import neurocars.neuralNetwork.DataItem;
@@ -14,7 +15,8 @@ import neurocars.neuralNetwork.DataItem;
 public class InputManager {
 
   public static final int INPUT_LENGTH = 6;
-  public static final int OUTPUT_LENGTH = 3;
+  public static final int OUTPUT_LENGTH = 4;
+  public static final int TRAIN_TEST_RATIO = 10;
 
   private File trainInput;
   private File testInput;
@@ -28,7 +30,7 @@ public class InputManager {
    * 
    * @param trainInput
    * @param testInput
-   *          soubor s testovacimi soubory. Pokud neexistuje, tak null
+   *          soubor s testovacimi soubory.
    */
   public InputManager(File trainInput, File testInput) {
     this.trainInput = trainInput;
@@ -36,10 +38,22 @@ public class InputManager {
   }
 
   /**
+   * Vytvori managera a inicializuje testovaci a trenovaci data
+   * 
+   * @param trainInput
+   */
+  public InputManager(File trainInput) {
+    this.trainInput = trainInput;
+    splitFile(trainInput);
+  }
+
+  /**
    * Otevre trenovaci soubor
    */
   public void initTrainData() {
-    trainData = processFile(trainInput);
+    if (testInput != null) {
+      trainData = processFile(trainInput);
+    }
     resetTrainFile();
   }
 
@@ -97,7 +111,9 @@ public class InputManager {
    * Otevre testovaci soubor
    */
   public void initTestData() {
-    testData = processFile(testInput);
+    if (testInput != null) {
+      testData = processFile(testInput);
+    }
     resetTestFile();
   }
 
@@ -131,11 +147,32 @@ public class InputManager {
    * @param trainFile
    * @param testFile
    */
-  public static void splitFile(File inputFile, File trainFile, File testFile) {
-    // TODO
+  public void splitFile(File inputFile) {
+    List<List<String>> all = InputManager.processFile(inputFile);
+    List<List<String>> testData = new ArrayList<List<String>>(128);
+    List<List<String>> trainData = new ArrayList<List<String>>(128);
+    int capacity = all.size();
+    List<Integer> osudi = new ArrayList<Integer>(capacity);
+    for (int i = 0; i < capacity; i++) {
+      osudi.add(i); // naplni osudi cisly 0 az capacity
+    }
+    Collections.shuffle(osudi); // zamichej
+    int i = 0;
+    for (int index : osudi) { // prvni TRAIN_TEST_RATIO-inu dej do testovacich,
+      // zbytek do
+      // trenovacich
+      if (i < capacity / TRAIN_TEST_RATIO) { // testovaci
+        testData.add(all.get(index));
+      } else { // trenovaci
+        trainData.add(all.get(index));
+      }
+      i++;
+    }
+    this.testData = testData;
+    this.trainData = trainData;
   }
 
-  private List<List<String>> processFile(File file) {
+  private static List<List<String>> processFile(File file) {
     if (file == null) {
       throw new NullPointerException("file");
     }
@@ -164,8 +201,8 @@ public class InputManager {
     return data;
   }
 
-  public void print() {
-    System.out.println(trainData);
+  public String toString() {
+    return "TRAINDATA:" + trainData + "\n\nTESTDATA:" + testData;
   }
 
 }

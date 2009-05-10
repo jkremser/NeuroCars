@@ -16,8 +16,7 @@ public class Tester {
 
     // IO
     InputManager in = new InputManager(new File(
-        "/home/freon/skola/NeuroN/neurocars/neurocars/player4_replay.txt"),
-        null);
+        "/home/freon/skola/NeuroN/neurocars/neurocars/player4_replay.txt"));
     in.initTrainData();
     DataItem it = null;
     int i = 0;
