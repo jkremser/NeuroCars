@@ -133,10 +133,13 @@ public class Game {
           if (log.isDebugEnabled() && c.getId().endsWith("debug")
               && !(gui instanceof NoGUI)) {
             // statusMessage = "X=" + nf.format(c.getX()) + ";Y="
-            // + nf.format(c.getY()) + ";speed=" + nf.format(c.getSpeed())
-            // + ";angle=" + nf.format(c.getAngle()) + ";steeringWheel="
+            // + nf.format(c.getY()) + ";speed=" +
+            // nf.format(c.getSpeed())
+            // + ";angle=" + nf.format(c.getAngle()) +
+            // ";steeringWheel="
             // + nf.format(c.getSteeringWheel()) + ";nextWayPoint="
-            // + c.getNextWayPoint() + ";lap=" + c.getLap() + ";lapTimes="
+            // + c.getNextWayPoint() + ";lap=" + c.getLap() +
+            // ";lapTimes="
             // + c.getLapTimes() + ";cycleTime=" + delta;
             statusMessage = "nextWayPoint=" + c.getNextWayPoint() + ";lap="
                 + c.getLap() + ";lapTimes=" + c.getLapTimes();
@@ -145,16 +148,21 @@ public class Game {
 
         gui.refresh();
 
-        long delta = System.currentTimeMillis() - loopBeginTime;
+        // long delta = System.currentTimeMillis() - loopBeginTime;
+        cycleCounter++;
 
-        if (gui.getCycleDelay() > delta) {
+        long delta = gui.getCycleDelay()
+            - (System.currentTimeMillis() - loopBeginTime);
+
+        if (delta > 0) {
           try {
-            Thread.sleep(gui.getCycleDelay() - delta);
+            Thread.sleep(delta);
           } catch (Exception e) {
           }
+        } else if (delta < 0) {
+          System.out.println("cycle overrun by " + (-delta) + "ms");
         }
 
-        cycleCounter++;
       }
 
       RaceResult[] results = this.getResults();

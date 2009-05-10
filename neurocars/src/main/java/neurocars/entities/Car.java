@@ -41,7 +41,7 @@ public class Car extends Entity {
   private final boolean saveReplay;
   private BufferedWriter replayLog;
 
-  // cislo aktualniho kole
+  // cislo aktualniho kola
   private int lap;
   // cas zacatku kola
   private long lapStartTime;
