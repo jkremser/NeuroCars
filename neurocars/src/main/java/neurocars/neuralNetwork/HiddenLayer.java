@@ -5,7 +5,7 @@ import java.util.List;
 
 public class HiddenLayer {
 
-	private int layerIndex;
+	private int layerIndex; //asi jen k testovcim ucelum
 	private List<HiddenNode> nodes;
 	private boolean lastHiddenLayer;
 	
