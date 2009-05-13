@@ -2,6 +2,7 @@ package neurocars.neuralNetwork;
 
 import java.io.File;
 
+import neurocars.neuralNetwork.service.InputManagerImpl;
 import neurocars.neuralNetwork.service.InputManager;
 
 /**
@@ -21,7 +22,7 @@ public class MrsTeacher {
 	public static void main(String... args) {
 
 		// IO
-		InputManager in = new InputManager(
+		InputManager in = new InputManagerImpl(
 				new File(
 				// "/home/freon/skola/NeuroN/neurocars/neurocars/player4_replay.txt"));
 						"C:\\neurocars\\player1_replay.txt"));
@@ -81,9 +82,9 @@ public class MrsTeacher {
 			Network net = Network.loadNetwork(network);
 			net.setMaxIterations(maxIter);
 			if (args.length == 8) {
-				net.setInputManager(new InputManager(trainFile, testFile));
+				net.setInputManager(new InputManagerImpl(trainFile, testFile));
 			} else {
-				net.setInputManager(new InputManager(trainFile));
+				net.setInputManager(new InputManagerImpl(trainFile));
 			}
 
 			System.out.println(net);

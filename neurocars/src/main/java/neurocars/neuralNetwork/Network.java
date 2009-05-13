@@ -13,6 +13,8 @@ import java.util.List;
 
 import neurocars.neuralNetwork.service.Constants;
 import neurocars.neuralNetwork.service.InputManager;
+import neurocars.neuralNetwork.service.InputManagerDumbImpl;
+import neurocars.neuralNetwork.service.InputManagerImpl;
 import neurocars.neuralNetwork.service.Transformer;
 import neurocars.valueobj.NeuralNetworkInput;
 import neurocars.valueobj.NeuralNetworkOutput;
@@ -109,7 +111,8 @@ public class Network implements Serializable {
 		} else {
 			this.endCondition = EndConditionType.TEST_ERROR;
 		}
-		inputManager = new InputManager(trainFile, testFile);
+		//inputManager = new InputManagerImpl(trainFile, testFile);
+		inputManager = new InputManagerDumbImpl();//TMP
 		this.tresholdError = tresholdError;
 		this.outputFile = outputFile;
 		this.hiddenLayersNumber = hiddenLayersNumber;
@@ -225,7 +228,7 @@ public class Network implements Serializable {
 		initNetwork();
 		DataItem item;
 		iterations = 0;
-		System.out.println("endcondition:" + endConditionFulfilled());
+		//System.out.println("endcondition:" + endConditionFulfilled());
 		while (!endConditionFulfilled() || iterations==0) { 
 		//pred prvni iteraci je totiz trainError 0 < tresholdError a proto i endConditionFulfilled() je true
 			if (endCondition == EndConditionType.TRAIN_ERROR) {
@@ -233,7 +236,7 @@ public class Network implements Serializable {
 			}
 			inputManager.resetTrainData();
 			while ((item = inputManager.getNextTrainItem()) != null) {
-				System.out.println("item" + item);
+				//System.out.println("item: " + item);
 				processInput(item);
 				if (endCondition == EndConditionType.TRAIN_ERROR) {
 					updateTrainError(item);
@@ -244,7 +247,7 @@ public class Network implements Serializable {
 			iterations++;
 			System.out.println("iteration:" + iterations);
 		}
-		inputManager.closeTrainData();
+		//inputManager.closeTrainData();
 		serializeNetwork();
 		learningMode = false;
 	}
@@ -440,7 +443,7 @@ public class Network implements Serializable {
 		this.maxIterations = maxIter;
 	}
 
-	public void setInputManager(InputManager inputManager) {
+	public void setInputManager(InputManagerImpl inputManager) {
 		this.inputManager = inputManager;
 	}
 }
