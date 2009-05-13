@@ -53,20 +53,22 @@ public class InputManager {
     if (testInput != null) {
       trainData = processFile(trainInput);
     }
-    resetTrainFile();
+    resetTrainData();
   }
 
   /**
-   * Nastavi ukazatel na novy radek, aby se mohlo prochazet znova
+   * Nastavi ukazatel na prvni radek, aby se mohlo prochazet znova
    */
-  public void resetTrainFile() {
+  public void resetTrainData() {
     trainItemCounter = 0;
   }
 
   /**
-   * zbytecna metoda
+   * zbytecna metoda pri teto implementaci.
+   * Ted jsou vsechny data v pameti. Pokud to zmenime a bude se prubezne prochazet, bufferovat a tak, 
+   * tak bude treba soubor zavrit mimo metodu processFile()
    */
-  public void closeTrainFile() {
+  public void closeTrainData() {
     trainData = null;
   }
 
@@ -113,20 +115,20 @@ public class InputManager {
     if (testInput != null) {
       testData = processFile(testInput);
     }
-    resetTestFile();
+    resetTestData();
   }
 
   /**
    * Nastavi ukazatel na novy radek, aby se mohlo prochazet znova
    */
-  public void resetTestFile() {
+  public void resetTestData() {
     testItemCounter = 0;
   }
 
   /**
    * zbytecna metoda
    */
-  public void closeTestFile() {
+  public void closeTestData() {
     testData = null;
   }
 
