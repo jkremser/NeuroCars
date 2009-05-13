@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,8 +18,10 @@ public class InputManagerImpl implements InputManager {
 
   private File trainInput;
   private File testInput;
-  private List<List<String>> testData; //TODO: List Listu Stringu je tady neefektivni, kdyz to bude furt v pameti
-  private List<List<String>> trainData; // nevim, proc jsi radeji nepouzil List<DataItem>
+  private List<DataItem> testData;
+  // neefektivni, kdyz to bude furt v
+  // pameti
+  private List<DataItem> trainData;
   private int trainItemCounter = -1;
   private int testItemCounter = -1;
 
@@ -46,40 +47,46 @@ public class InputManagerImpl implements InputManager {
     splitFile(trainInput);
   }
 
-  /* (non-Javadoc)
- * @see neurocars.neuralNetwork.service.InputManager#initTrainData()
- */
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.neuralNetwork.service.InputManager#initTrainData()
+   */
   public void initTrainData() {
-    if (testInput != null) {
+    if (trainInput != null) {
       trainData = processFile(trainInput);
     }
     resetTrainData();
   }
 
-  /* (non-Javadoc)
- * @see neurocars.neuralNetwork.service.InputManager#resetTrainData()
- */
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.neuralNetwork.service.InputManager#resetTrainData()
+   */
   public void resetTrainData() {
     trainItemCounter = 0;
   }
 
   /**
-   * zbytecna metoda pri teto implementaci.
-   * Ted jsou vsechny data v pameti. Pokud to zmenime a bude se prubezne prochazet, bufferovat a tak, 
-   * tak bude treba soubor zavrit mimo metodu processFile()
+   * zbytecna metoda pri teto implementaci. Ted jsou vsechny data v pameti.
+   * Pokud to zmenime a bude se prubezne prochazet, bufferovat a tak, tak bude
+   * treba soubor zavrit mimo metodu processFile()
    */
   public void closeTrainData() {
     trainData = null;
   }
 
-  /* (non-Javadoc)
- * @see neurocars.neuralNetwork.service.InputManager#getNextTrainItem()
- */
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.neuralNetwork.service.InputManager#getNextTrainItem()
+   */
   public DataItem getNextTrainItem() {
     return getNextItem(trainItemCounter++, trainData);
   }
 
-  private DataItem getNextItem(int which, List<List<String>> from) {
+  private DataItem getNextItem(int which, List<DataItem> from) {
     if (which < 0) {
       throw new IllegalArgumentException(
           "zaporny index, pravdepodobne je potreba nejprve inicializovat data");
@@ -90,27 +97,15 @@ public class InputManagerImpl implements InputManager {
     if (from.size() <= which) {
       return null; // empty
     }
-    DataItem item = new DataItem(Network.INPUT_SIZE, Network.OUTPUT_SIZE);
-    int i = 0;
-    for (String stringValue : from.get(which)) {
-      try {
-        if (i < Network.OUTPUT_SIZE) {
-          item.addOutputValue(Double.parseDouble(stringValue));
-        } else {
-          item.addInputValue(Double.parseDouble(stringValue));
-        }
-      } catch (NumberFormatException nfe) {
-        System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na retezci "
-            + stringValue);
-      }
-      i++;
-    }
-    return item;
+
+    return from.get(which);
   }
 
-  /* (non-Javadoc)
- * @see neurocars.neuralNetwork.service.InputManager#initTestData()
- */
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.neuralNetwork.service.InputManager#initTestData()
+   */
   public void initTestData() {
     if (testInput != null) {
       testData = processFile(testInput);
@@ -118,9 +113,11 @@ public class InputManagerImpl implements InputManager {
     resetTestData();
   }
 
-  /* (non-Javadoc)
- * @see neurocars.neuralNetwork.service.InputManager#resetTestData()
- */
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.neuralNetwork.service.InputManager#resetTestData()
+   */
   public void resetTestData() {
     testItemCounter = 0;
   }
@@ -132,9 +129,11 @@ public class InputManagerImpl implements InputManager {
     testData = null;
   }
 
-  /* (non-Javadoc)
- * @see neurocars.neuralNetwork.service.InputManager#getNextTestItem()
- */
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.neuralNetwork.service.InputManager#getNextTestItem()
+   */
   public DataItem getNextTestItem() {
     return getNextItem(testItemCounter++, testData);
   }
@@ -149,9 +148,9 @@ public class InputManagerImpl implements InputManager {
    * @param testFile
    */
   public void splitFile(File inputFile) {
-    List<List<String>> all = InputManagerImpl.processFile(inputFile);
-    List<List<String>> testData = new ArrayList<List<String>>(128);
-    List<List<String>> trainData = new ArrayList<List<String>>(128);
+    List<DataItem> all = InputManagerImpl.processFile(inputFile);
+    List<DataItem> testData = new ArrayList<DataItem>(128);
+    List<DataItem> trainData = new ArrayList<DataItem>(128);
     int capacity = all.size();
     List<Integer> osudi = new ArrayList<Integer>(capacity);
     for (int i = 0; i < capacity; i++) {
@@ -173,11 +172,11 @@ public class InputManagerImpl implements InputManager {
     this.trainData = trainData;
   }
 
-  private static List<List<String>> processFile(File file) {
+  private static List<DataItem> processFile(File file) {
     if (file == null) {
       throw new NullPointerException("file");
     }
-    List<List<String>> data = new ArrayList<List<String>>(128);
+    List<DataItem> data = new ArrayList<DataItem>(128);
     BufferedReader bis = null;
     try {
       bis = new BufferedReader(new FileReader(file));
@@ -188,7 +187,22 @@ public class InputManagerImpl implements InputManager {
     String line = null;
     try {
       while ((line = bis.readLine()) != null) {
-        data.add(Arrays.asList(line.split(";")));
+        DataItem item = new DataItem(Network.INPUT_SIZE, Network.OUTPUT_SIZE);
+        int i = 0;
+        for (String stringValue : line.split(";")) {
+          try {
+            if (i < Network.OUTPUT_SIZE) {
+              item.addOutputValue(Double.parseDouble(stringValue));
+            } else {
+              item.addInputValue(Double.parseDouble(stringValue));
+            }
+          } catch (NumberFormatException nfe) {
+            System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na retezci "
+                + stringValue);
+          }
+          i++;
+        }
+        data.add(item);
       }
     } catch (IOException e) {
       e.printStackTrace();
