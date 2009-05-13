@@ -115,6 +115,7 @@ public class Network implements Serializable {
 		this.hiddenLayersNumber = hiddenLayersNumber;
 		this.hiddenLayerSize = hiddenLayerSize;
 		Constants.setLearningConstant(learningConstant);
+		this.maxIterations = maxIterations;
 	}
 
 	/**
@@ -150,8 +151,8 @@ public class Network implements Serializable {
 	/**
 	 * Vytvori samotnou sit
 	 */
-	public void initNetwork() {
-		inputLayer = new InputLayer(INPUT_SIZE);
+	private void initNetwork() {
+		inputLayer = new InputLayer(INPUT_SIZE, hiddenLayerSize);
 		hiddenLayers = new ArrayList<HiddenLayer>(1);
 		HiddenLayer layer;
 		HiddenLayer previousLayer = null;
@@ -219,16 +220,20 @@ public class Network implements Serializable {
 	 * Spusti uceni
 	 */
 	public void learn() {
+		// System.out.println("endcondition" + endCondition);
 		inputManager.initTrainData();
 		initNetwork();
 		DataItem item;
 		iterations = 0;
-		while (!endConditionFulfilled()) {
+		System.out.println("endcondition:" + endConditionFulfilled());
+		while (!endConditionFulfilled() || iterations==0) { 
+		//pred prvni iteraci je totiz trainError 0 < tresholdError a proto i endConditionFulfilled() je true
 			if (endCondition == EndConditionType.TRAIN_ERROR) {
 				trainError = 0;
 			}
-			inputManager.resetTrainFile();
+			inputManager.resetTrainData();
 			while ((item = inputManager.getNextTrainItem()) != null) {
+				System.out.println("item" + item);
 				processInput(item);
 				if (endCondition == EndConditionType.TRAIN_ERROR) {
 					updateTrainError(item);
@@ -237,8 +242,9 @@ public class Network implements Serializable {
 				adjustWeights();
 			}
 			iterations++;
+			System.out.println("iteration:" + iterations);
 		}
-		inputManager.closeTrainFile();
+		inputManager.closeTrainData();
 		serializeNetwork();
 		learningMode = false;
 	}
@@ -302,8 +308,11 @@ public class Network implements Serializable {
 	 * @return true pokud je podminka splnena, false jinak
 	 */
 	public boolean endConditionFulfilled() {
+		//System.out.println("maxIterations:" + maxIterations);
 		boolean condition = (iterations == maxIterations);
+		//System.out.println("condition:" + condition);
 		if (endCondition == EndConditionType.TRAIN_ERROR) {
+			//System.out.println("trainError" + trainError);
 			condition |= (trainError <= tresholdError);
 		}
 		if (endCondition == EndConditionType.TEST_ERROR) {
@@ -422,9 +431,9 @@ public class Network implements Serializable {
 		return retString;
 	}
 
-	//TODO: tyto metody jsou jen testovaci, pozdeji smazat
+	// TODO: tyto metody jsou jen testovaci, pozdeji smazat
 	public int getHiddenLayerSize() {
-		return getHiddenLayerSize(); 
+		return getHiddenLayerSize();
 	}
 
 	public void setMaxIterations(int maxIter) {

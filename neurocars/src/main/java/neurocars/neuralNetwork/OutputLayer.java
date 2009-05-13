@@ -1,10 +1,15 @@
 package neurocars.neuralNetwork;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OutputLayer {
+public class OutputLayer implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7051009155576853841L;
 	private List<OutputNode> nodes;
 	
 	public OutputLayer(int size){

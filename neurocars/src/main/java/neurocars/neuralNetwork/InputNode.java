@@ -1,84 +1,99 @@
 package neurocars.neuralNetwork;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import neurocars.neuralNetwork.service.Constants;
 import neurocars.neuralNetwork.service.WeightInitiator;
 
-public class InputNode {
-	
+public class InputNode implements Serializable {
+
+	private static final long serialVersionUID = 7523348218377983154L;
+
 	private double input;
-	//vstupni neuron nema chybovou hodnotu
-	
+	// vstupni neuron nema chybovou hodnotu
 	private List<HiddenNode> nextLayerNodes;
 	private List<Double> nextLayerNodesWeights;
-	
-	private WeightInitiator weightInitiator = new WeightInitiator();
-	
-	public void setInput(double input){
+	private transient WeightInitiator weightInitiator = new WeightInitiator();
+
+	public InputNode(int hiddenLayerSize) {
+		nextLayerNodes = new ArrayList<HiddenNode>(hiddenLayerSize);
+		nextLayerNodesWeights = new ArrayList<Double>(hiddenLayerSize);
+	}
+
+	public void setInput(double input) {
 		this.input = input;
 	}
-	
+
 	/*
-	 * @return vystup (tedy i vstup) vazeny vahou daneho neuronu nasledujici vrstvy
+	 * @return vystup (tedy i vstup) vazeny vahou daneho neuronu nasledujici
+	 * vrstvy
 	 */
-	public double getWeighteOutput(int index){
+	public double getWeighteOutput(int index) {
 		return input * nextLayerNodesWeights.get(index);
 	}
-	
-	
-	
+
 	/**
 	 * Prida hiddenNode a nastavi jeho vahu - nahodna mala hodnota
-	 * @param node pridavany node
+	 * 
+	 * @param node
+	 *            pridavany node
 	 */
-	public void addNextLayerNode(HiddenNode node){
+	public void addNextLayerNode(HiddenNode node) {
+		if (nextLayerNodes == null)
+			System.out.println("null");
+
 		nextLayerNodes.add(node);
 		nextLayerNodesWeights.add(weightInitiator.getWeight());
 	}
-	
+
 	/**
 	 * Vrati vahu spoje z tohoto neuronu do neuronu index nasledujici vrstvy
-	 * @param index index neuronu, o vahu jehoz spoje se jedna
+	 * 
+	 * @param index
+	 *            index neuronu, o vahu jehoz spoje se jedna
 	 * @return
 	 */
-	public double getWeight(int index){
+	public double getWeight(int index) {
 		return nextLayerNodesWeights.get(index);
 	}
-	
+
 	/**
-	 * Nastavi vahu spoje z tohoto neuronu do neuronu index nasledujici vrstvy 
-	 * @param index index neuronu, jehoz vahu nastavujeme
-	 * @param weight hodnota vahy
+	 * Nastavi vahu spoje z tohoto neuronu do neuronu index nasledujici vrstvy
+	 * 
+	 * @param index
+	 *            index neuronu, jehoz vahu nastavujeme
+	 * @param weight
+	 *            hodnota vahy
 	 * @return
 	 */
-	public void setWeight(int index, double weight){
+	public void setWeight(int index, double weight) {
 		nextLayerNodesWeights.set(index, Double.valueOf(weight));
 	}
 
 	public void sendWeightedOutputs() {
-		for (int i=0; i<nextLayerNodes.size(); i++){
-		HiddenNode hidNode = nextLayerNodes.get(i);
-		hidNode.addWeightedInput(getWeighteOutput(i)); 
-		//tady se to zbytecne pocita nekolikrat
-		//radsi predpocitat, pak ale vyresit inicializaci pro dalsi vstup!
-	   }
+		for (int i = 0; i < nextLayerNodes.size(); i++) {
+			HiddenNode hidNode = nextLayerNodes.get(i);
+			hidNode.addWeightedInput(getWeighteOutput(i));
+			// tady se to zbytecne pocita nekolikrat
+			// radsi predpocitat, pak ale vyresit inicializaci pro dalsi vstup!
+		}
 	}
 
 	/**
-	 * Upravi vahu pro kazdy neuron nasledujici skryte vrstvy 
-	 * (podle hodnoty jeho chyby a vstupu do nej)
+	 * Upravi vahu pro kazdy neuron nasledujici skryte vrstvy (podle hodnoty
+	 * jeho chyby a vstupu do nej)
 	 */
 	public void adjustWeights() {
 		double deltaW;
 		double newW;
-		for(int i=0; i<nextLayerNodes.size(); i++){
-			deltaW = Constants.getLearningConstant() * nextLayerNodes.get(i).getError() * input;
+		for (int i = 0; i < nextLayerNodes.size(); i++) {
+			deltaW = Constants.getLearningConstant()
+					* nextLayerNodes.get(i).getError() * input;
 			newW = nextLayerNodesWeights.get(i) + deltaW;
-			nextLayerNodesWeights.set(i,newW);
+			nextLayerNodesWeights.set(i, newW);
 		}
 	}
-	
-	
 
 }

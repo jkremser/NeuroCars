@@ -1,17 +1,23 @@
 package neurocars.neuralNetwork;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import neurocars.neuralNetwork.service.Constants;
 import neurocars.neuralNetwork.service.Transformer;
 import neurocars.neuralNetwork.service.WeightInitiator;
 
-public class HiddenNode {
+public class HiddenNode implements Serializable{
 
+	/**
+	 * TODO:Zvazit, jestli neco nebude transient
+	 */
+	private static final long serialVersionUID = 9201949309993748246L;
 	private double weightedInputSum = 0.0;
-	private double error;
+	private transient double error;
 	private double output;
-	private WeightInitiator weightInitiator = new WeightInitiator(); 
+	private transient WeightInitiator weightInitiator = new WeightInitiator(); 
 	
 	private boolean inLastHiddenLayer;
 	//podle inLastHiddenLayer se rozhodnem, zda dalsi neurony budou hidden nebo output
@@ -21,8 +27,15 @@ public class HiddenNode {
 	private List<OutputNode> nextLayerONodes;
 	private List<Double> nextLayerONodesWeights;
 	
-	public HiddenNode(boolean inLastHiddenLayer){
+	public HiddenNode(boolean inLastHiddenLayer, int hiddenLayerSize){
 		this.inLastHiddenLayer = inLastHiddenLayer;
+		if (inLastHiddenLayer){
+			nextLayerONodes = new ArrayList<OutputNode>(Network.OUTPUT_SIZE);
+			nextLayerONodesWeights = new ArrayList<Double>(Network.OUTPUT_SIZE);
+		}else{
+			nextLayerHNodes = new ArrayList<HiddenNode>(hiddenLayerSize);
+			nextLayerHNodesWeights = new ArrayList<Double>(hiddenLayerSize);
+		}
 	}
 	
 	/**
