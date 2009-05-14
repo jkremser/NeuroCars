@@ -12,56 +12,55 @@ import neurocars.valueobj.NeuralNetworkOutput;
  */
 public class NeuroController extends Controller {
 
-  private Car car;
-  private NeuralNetworkOutput out;
-  private Network net;
+	private Car car;
+	private NeuralNetworkOutput out;
+	private Network net;
 
-  public NeuroController(Network net) {
-    net.setLearningMode(false);
-    System.out.println(net);
-    this.net = net;
-  }
+	public NeuroController(Network net) {
+		System.out.println(net);
+		this.net = net;
+	}
 
-  public void next() {
-    NeuralNetworkInput in = car.getNeuralNetworkInput();
-    boolean flip = false;
-    if (in.getCurveAngle() < 0) { // zaporny uhel zatacky, musime klopit
-      flip = true;
-      in.setCurveAngle(-in.getCurveAngle());
-      in.setWayPointAngle(-in.getWayPointAngle());
-      in.setSteeringWheel(-in.getSteeringWheel());
-    }
-    this.out = net.runNetwork(in);
-    if (flip) {
-      boolean aux = out.isLeft();
-      out.setLeft(out.isRight());
-      out.setRight(aux);
-    }
-    System.out.println(out);
-  }
+	public void next() {
+		NeuralNetworkInput in = car.getNeuralNetworkInput();
+		boolean flip = false;
+		if (in.getCurveAngle() < 0) { // zaporny uhel zatacky, musime klopit
+			flip = true;
+			in.setCurveAngle(-in.getCurveAngle());
+			in.setWayPointAngle(-in.getWayPointAngle());
+			in.setSteeringWheel(-in.getSteeringWheel());
+		}
+		this.out = net.runNetwork(in);
+		if (flip) {
+			boolean aux = out.isLeft();
+			out.setLeft(out.isRight());
+			out.setRight(aux);
+		}
+		System.out.println(out);
+	}
 
-  public boolean accelerate() {
-    return out.isAccelerate();
-  }
+	public boolean accelerate() {
+		return out.isAccelerate();
+	}
 
-  public boolean brake() {
-    return out.isBrake();
-  }
+	public boolean brake() {
+		return out.isBrake();
+	}
 
-  public boolean left() {
-    return out.isLeft();
-  }
+	public boolean left() {
+		return out.isLeft();
+	}
 
-  public boolean right() {
-    return out.isRight();
-  }
+	public boolean right() {
+		return out.isRight();
+	}
 
-  public void setCar(Car car) {
-    this.car = car;
-  }
+	public void setCar(Car car) {
+		this.car = car;
+	}
 
-  public Car getCar() {
-    return car;
-  }
+	public Car getCar() {
+		return car;
+	}
 
 }

@@ -22,10 +22,9 @@ public class MrsTeacher {
 	public static void main(String... args) {
 
 		// IO
-		InputManager in = new InputManagerImpl(
-				new File(
-				// "/home/freon/skola/NeuroN/neurocars/neurocars/player4_replay.txt"));
-						"C:\\neurocars\\player1_replay.txt"));
+		InputManager in = new InputManagerImpl(new File(
+		// "/home/freon/skola/NeuroN/neurocars/neurocars/player4_replay.txt"));
+				"C:\\neurocars\\player1_replay.txt"));
 		in.initTrainData();
 		DataItem it = null;
 		int i = 0;
@@ -34,18 +33,24 @@ public class MrsTeacher {
 		}
 
 		// perzistence
-		Network net = new Network(null, null, 2.4, new File("net"), 5, 10, 0.5,
-				2001);
-		net.serializeNetwork();
+		Network net = new Network(2.4, new File("net"), 5, 10, 0.5, 2001);
 
-		Network sit = Network.loadNetwork(new File("net"));
-		System.out.println(sit.getHiddenLayerSize());
+		// net.serializeNetwork(); //tato metoda se vola, jakmile je uceni
+		// hotove, je private
+		// tady nema zadny smysl, ukladas prazdnou sit
+
+		// Network sit = Network.loadNetwork(new File("net"));
+		// System.out.println(sit.getHiddenLayerSize());
+		System.out.println(net.getHiddenLayerSize());
 	}
 
 	/**
 	 * Spusti uceni site
 	 * 
 	 * format argumentu: -o sit -i maxIter -t trainSoubor [-te testSoubor]
+	 * (jeste by tu mohlo byt -s split input trFile teFile). A ukladani a pak
+	 * zas nacitani prazdne site taky moc nechapu... Vsak jakmile se douci, tak
+	 * se to ulozi do soubou, ktery jsi specifikoval v konstruktoru
 	 */
 	public void learn() {
 		if ((args.length != 6 && args.length != 8) || (!"-o".equals(args[0]))

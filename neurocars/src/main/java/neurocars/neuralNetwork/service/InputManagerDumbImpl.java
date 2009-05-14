@@ -10,7 +10,6 @@ public class InputManagerDumbImpl implements InputManager {
 
 	private List<DataItem> trainData;
 	private int trainCounter;
-	
 
 	public DataItem getNextTestItem() {
 		// TODO Auto-generated method stub
@@ -18,7 +17,7 @@ public class InputManagerDumbImpl implements InputManager {
 	}
 
 	public DataItem getNextTrainItem() {
-		if (trainCounter < trainData.size()){
+		if (trainCounter < trainData.size()) {
 			return trainData.get(trainCounter++);
 		}
 		return null;
@@ -89,6 +88,10 @@ public class InputManagerDumbImpl implements InputManager {
 		item.addOutputValue(0);
 		trainData.add(item);
 
+	}
+
+	public boolean containsTestData() {
+		return false;
 	}
 
 }

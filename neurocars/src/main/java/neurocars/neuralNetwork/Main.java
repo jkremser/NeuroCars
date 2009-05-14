@@ -2,6 +2,10 @@ package neurocars.neuralNetwork;
 
 import java.io.File;
 
+import neurocars.neuralNetwork.service.InputManager;
+import neurocars.neuralNetwork.service.InputManagerDumbImpl;
+import neurocars.neuralNetwork.service.InputManagerImpl;
+
 public class Main {
 
 	/**
@@ -12,12 +16,16 @@ public class Main {
 		File outputFile = new File("C:\\neurocars\\network");
 		double tresholdError = 0.5;
 		int hiddenLayersNumber = 2;
-		int hiddenLayerSize = 10;
+		int hiddenLayerSize = 15;
 		double learningConstant = 0.2;
-		int maxIterations = 10000;
-		Network network = new Network(trainFile, tresholdError, outputFile,
+		int maxIterations = 1000;
+		InputManager iManager = new InputManagerImpl(trainFile);
+		// InputManager iManager = new InputManagerDumbImpl();
+
+		Network network = new Network(tresholdError, outputFile,
 				hiddenLayersNumber, hiddenLayerSize, learningConstant,
 				maxIterations);
+		network.setInputManager(iManager);
 		network.learn();
 	}
 }

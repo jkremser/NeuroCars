@@ -34,4 +34,6 @@ public interface InputManager {
 	 */
 	public abstract DataItem getNextTestItem();
 
+	public abstract boolean containsTestData();
+
 }

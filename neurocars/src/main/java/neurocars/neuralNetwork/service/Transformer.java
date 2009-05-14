@@ -91,7 +91,7 @@ public class Transformer {
    * @return true pokud je blize k 1, false pokud je blize k 0
    */
   private static boolean closerToOne(double value) {
-    if (Math.abs(1 - value) < 0.68) { // vychytat
+    if (value > 0.5) { // vychytat
       return true;
     }
     return false;
