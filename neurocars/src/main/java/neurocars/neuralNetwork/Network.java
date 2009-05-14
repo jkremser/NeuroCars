@@ -111,8 +111,8 @@ public class Network implements Serializable {
 		} else {
 			this.endCondition = EndConditionType.TEST_ERROR;
 		}
-		//inputManager = new InputManagerImpl(trainFile, testFile);
-		inputManager = new InputManagerDumbImpl();//TMP
+		// inputManager = new InputManagerImpl(trainFile, testFile);
+		inputManager = new InputManagerDumbImpl();// TMP
 		this.tresholdError = tresholdError;
 		this.outputFile = outputFile;
 		this.hiddenLayersNumber = hiddenLayersNumber;
@@ -187,14 +187,15 @@ public class Network implements Serializable {
 		// vytvorit vystupni vrstvu
 		outputLayer = new OutputLayer(OUTPUT_SIZE);
 		// napojit posledni hidden vrstvu na vystupni
-		//System.out.println("OutputLayer.size():" + outputLayer.size());
-		//System.out.println("OUTPUT_SIZE:" + OUTPUT_SIZE);
-		//System.out.println("lastLayerIndex:" + previousLayer.getLayerIndex());
-		//System.out.println("hiddenLayerSize:" + hiddenLayerSize);
+		// System.out.println("OutputLayer.size():" + outputLayer.size());
+		// System.out.println("OUTPUT_SIZE:" + OUTPUT_SIZE);
+		// System.out.println("lastLayerIndex:" +
+		// previousLayer.getLayerIndex());
+		// System.out.println("hiddenLayerSize:" + hiddenLayerSize);
 		for (int j = 0; j < hiddenLayerSize; j++) {
 			HiddenNode previousLayerNode = previousLayer.getNode(j);
 			for (int k = 0; k < OUTPUT_SIZE; k++) {
-				//System.out.println("k:" + k);
+				// System.out.println("k:" + k);
 				previousLayerNode.addNextLayerONode(outputLayer.getNode(k));
 			}
 		}
@@ -233,15 +234,16 @@ public class Network implements Serializable {
 		initNetwork();
 		DataItem item;
 		iterations = 0;
-		//System.out.println("endcondition:" + endConditionFulfilled());
-		while (!endConditionFulfilled() || iterations==0) { 
-		//pred prvni iteraci je totiz trainError 0 < tresholdError a proto i endConditionFulfilled() je true
+		// System.out.println("endcondition:" + endConditionFulfilled());
+		while (!endConditionFulfilled() || iterations == 0) {
+			// pred prvni iteraci je totiz trainError 0 < tresholdError a proto
+			// i endConditionFulfilled() je true
 			if (endCondition == EndConditionType.TRAIN_ERROR) {
 				trainError = 0;
 			}
 			inputManager.resetTrainData();
 			while ((item = inputManager.getNextTrainItem()) != null) {
-				//System.out.println("item: " + item);
+				// System.out.println("item: " + item);
 				processInput(item);
 				if (endCondition == EndConditionType.TRAIN_ERROR) {
 					updateTrainError(item);
@@ -250,13 +252,14 @@ public class Network implements Serializable {
 				adjustWeights();
 			}
 			iterations++;
-			//System.out.println("iteration:" + iterations);
-			System.out.println("trainError" + trainError);
+			System.out.println("iteration:" + iterations);
+			System.out.println("trainError: " + trainError);
 		}
-		//inputManager.closeTrainData();
+		// inputManager.closeTrainData();
 		serializeNetwork();
 		learningMode = false;
-		
+		//System.out.println("iteration:" + iterations);
+		System.out.println(outputLayer);
 	}
 
 	/**
@@ -318,11 +321,11 @@ public class Network implements Serializable {
 	 * @return true pokud je podminka splnena, false jinak
 	 */
 	public boolean endConditionFulfilled() {
-		//System.out.println("maxIterations:" + maxIterations);
+		// System.out.println("maxIterations:" + maxIterations);
 		boolean condition = (iterations == maxIterations);
-		//System.out.println("condition:" + condition);
+		// System.out.println("condition:" + condition);
 		if (endCondition == EndConditionType.TRAIN_ERROR) {
-			//System.out.println("trainError" + trainError);
+			// System.out.println("trainError" + trainError);
 			condition |= (trainError <= tresholdError);
 		}
 		if (endCondition == EndConditionType.TEST_ERROR) {
@@ -367,10 +370,15 @@ public class Network implements Serializable {
 	 */
 	private double computeErrorForOneItem(DataItem item) {
 		double error = 0;
+		//System.out.println("DataItem: " + item);
 		for (int i = 0; i < OUTPUT_SIZE; i++) {
 			OutputNode node = outputLayer.getNode(i);
+			//System.out.println("real output: " + node.getOutput());
+			//System.out.println("expected output: " + item.getOutput(i));
 			error += Math.pow(item.getOutput(i) - node.getOutput(), 2);
+			//System.out.println("Single node error:" + Math.pow(item.getOutput(i) - node.getOutput(), 2));
 		}
+		//System.out.println("Single item error:" + error);
 		return error;
 	}
 

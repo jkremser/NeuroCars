@@ -32,4 +32,16 @@ public class OutputLayer implements Serializable{
 	public int size(){
 		return nodes.size();
 	}
+	
+	public String toString(){
+		StringBuilder builder = new StringBuilder();
+		builder.append("output: ");
+		for(int i=0; i<nodes.size(); i++){
+			builder.append(nodes.get(i).getOutput());
+			if (i!= nodes.size() -1 ){
+				builder.append(';');
+			}
+		}
+		return builder.toString();
+	}
 }

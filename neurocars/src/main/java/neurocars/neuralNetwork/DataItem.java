@@ -54,6 +54,7 @@ public class DataItem {
 		input.add(Double.valueOf(value));
 	}
 
+	//TODO: na co zas tahle metoda? je to k necemu??? Rekl bych, ze spis matouci
 	public void setInput(List<Double> input) {
 		this.input = input;
 	}
@@ -66,7 +67,7 @@ public class DataItem {
 	 * @return
 	 */
 	public double getOutput(int index) {
-		return input.get(index);
+		return output.get(index);
 	}
 
 	/**
