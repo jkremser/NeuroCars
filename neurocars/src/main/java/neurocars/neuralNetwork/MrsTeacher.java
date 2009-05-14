@@ -53,6 +53,8 @@ public class MrsTeacher {
 	 * se to ulozi do soubou, ktery jsi specifikoval v konstruktoru
 	 */
 	public void learn() {
+		// manualne je to docela hardcore, nebylo by lepsi neco jako tohle:?
+		// http://commons.apache.org/cli/usage.html#Argument%20Options
 		if ((args.length != 6 && args.length != 8) || (!"-o".equals(args[0]))
 				|| (!"-i".equals(args[2])) || (!"-t".equals(args[4]))
 				|| (args.length == 8 && !"-te".equals(args[6]))) {
