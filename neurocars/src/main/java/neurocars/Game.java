@@ -67,6 +67,14 @@ public class Game {
     this.laps = sc.getLaps();
 
     this.gui = GUIService.getInstance().getGUI(sc.getGuiId(), this);
+
+    for (Car c : this.getCars()) {
+      if (c.getController() instanceof NeuroController) {
+        NeuroController nc = (NeuroController) c.getController();
+        nc.setCar(c);
+      }
+    }
+
   }
 
   /**
@@ -280,6 +288,7 @@ public class Game {
   public static void main(final String[] args) {
     String scenario = (args.length == 1 ? args[0]
         : "./config/scenario/scenario-1player.properties");
+    System.out.println("config =" + scenario);
     try {
       if (args.length <= 1) {
         Game g = new Game(scenario);

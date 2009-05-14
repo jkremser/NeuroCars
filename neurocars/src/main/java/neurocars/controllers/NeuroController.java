@@ -1,6 +1,8 @@
 package neurocars.controllers;
 
 import neurocars.entities.Car;
+import neurocars.neuralNetwork.Network;
+import neurocars.valueobj.NeuralNetworkInput;
 import neurocars.valueobj.NeuralNetworkOutput;
 
 /**
@@ -12,11 +14,30 @@ public class NeuroController extends Controller {
 
   private Car car;
   private NeuralNetworkOutput out;
+  private Network net;
+
+  public NeuroController(Network net) {
+    net.setLearningMode(false);
+    System.out.println(net);
+    this.net = net;
+  }
 
   public void next() {
-    // NeuralNetworkInput in = car.getNeuralNetworkInput();
-
-    // this.out = ...
+    NeuralNetworkInput in = car.getNeuralNetworkInput();
+    boolean flip = false;
+    if (in.getCurveAngle() < 0) { // zaporny uhel zatacky, musime klopit
+      flip = true;
+      in.setCurveAngle(-in.getCurveAngle());
+      in.setWayPointAngle(-in.getWayPointAngle());
+      in.setSteeringWheel(-in.getSteeringWheel());
+    }
+    this.out = net.runNetwork(in);
+    if (flip) {
+      boolean aux = out.isLeft();
+      out.setLeft(out.isRight());
+      out.setRight(aux);
+    }
+    System.out.println(out);
   }
 
   public boolean accelerate() {

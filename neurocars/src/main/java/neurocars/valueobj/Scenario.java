@@ -1,5 +1,6 @@
 package neurocars.valueobj;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +11,10 @@ import java.util.Properties;
 import neurocars.Game;
 import neurocars.controllers.Controller;
 import neurocars.controllers.KeyboardController;
+import neurocars.controllers.NeuroController;
 import neurocars.controllers.ReplayController;
 import neurocars.entities.Car;
+import neurocars.neuralNetwork.Network;
 import neurocars.services.CarSetupService;
 import neurocars.services.TrackService;
 import neurocars.utils.AppUtils;
@@ -27,6 +30,7 @@ public class Scenario {
 
   public static final String CONTROLLER_KEYBOARD = "keyboard";
   public static final String CONTROLLER_REPLAY = "replay";
+  public static final String CONTROLLER_NETWORK = "neuro";
 
   private final int xScreenSize;
   private final int yScreenSize;
@@ -103,6 +107,12 @@ public class Scenario {
 
         ReplayController rc = new ReplayController(replayFile);
         c = rc;
+      } else if (CONTROLLER_NETWORK.equals(p.getProperty(controllerKey))) {
+        String path = p.getProperty(controllerKey + ".config");
+        File netFile = new File("config/neuralnetwork/" + path);
+        Network net = Network.loadNetwork(netFile);
+        NeuroController nc = new NeuroController(net);
+        c = nc;
       } else {
         throw new ServiceException("unknown value: " + controllerKey + "="
             + p.getProperty(controllerKey));

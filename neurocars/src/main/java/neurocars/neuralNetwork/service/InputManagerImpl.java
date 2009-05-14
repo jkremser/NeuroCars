@@ -66,6 +66,7 @@ public class InputManagerImpl implements InputManager {
    */
   public void resetTrainData() {
     trainItemCounter = 0;
+    Collections.shuffle(trainData);
   }
 
   /**
@@ -120,6 +121,7 @@ public class InputManagerImpl implements InputManager {
    */
   public void resetTestData() {
     testItemCounter = 0;
+    Collections.shuffle(testData);
   }
 
   /**
@@ -186,6 +188,7 @@ public class InputManagerImpl implements InputManager {
     }
     String line = null;
     try {
+      bis.readLine();
       while ((line = bis.readLine()) != null) {
         DataItem item = new DataItem(Network.INPUT_SIZE, Network.OUTPUT_SIZE);
         int i = 0;
@@ -201,6 +204,15 @@ public class InputManagerImpl implements InputManager {
                 + stringValue);
           }
           i++;
+        }
+        if (item.getInput(4) < 0) { // uhle zatacky je zaporny
+          item.setInput(1, -item.getInput(1)); // prevraceni znamenka u otoceni
+          // volantu
+          item.setInput(3, -item.getInput(3)); // prevraceni znamenka u uhlu k
+          // nasledujicimu bodu
+          double aux = item.getOutput(3);
+          item.setOutput(3, item.getOutput(2)); // prohodi doleva a doprava
+          item.setOutput(2, aux);
         }
         data.add(item);
       }

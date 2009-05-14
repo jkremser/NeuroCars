@@ -9,7 +9,6 @@ import java.util.List;
 
 import neurocars.Game;
 import neurocars.controllers.Controller;
-import neurocars.controllers.ReplayController;
 import neurocars.utils.AppUtils;
 import neurocars.utils.ServiceException;
 import neurocars.valueobj.CarSetup;
@@ -76,9 +75,7 @@ public class Car extends Entity {
    * @throws ServiceException
    */
   public void processInput() throws ServiceException {
-    if (controller instanceof ReplayController) {
-      controller.next();
-    }
+    controller.next();
 
     if (finished) {
       // jestli jsem dojel, tak uz jenom zabrzdim
@@ -270,7 +267,7 @@ public class Car extends Entity {
         wp1.getY(), angle);
     double wayPointDistance = Math.sqrt(Math.pow(wp1.getX() - x, 2)
         + Math.pow(wp1.getY() - y, 2))
-        - wp1.getSize();
+        - wp1.getSize() / 2;
 
     d.setWayPointAngle(wayPointAngle);
     d.setWayPointDistance(wayPointDistance);
