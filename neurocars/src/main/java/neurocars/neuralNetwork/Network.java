@@ -160,7 +160,7 @@ public class Network implements Serializable {
 		HiddenLayer layer;
 		HiddenLayer previousLayer = null;
 		for (int i = 0; i < hiddenLayersNumber; i++) {
-			// vytvorime vrstvu
+			// vytvorime hidden vrstvy
 			layer = new HiddenLayer(i, hiddenLayerSize,
 					(i == (hiddenLayersNumber - 1)));
 			hiddenLayers.add(layer);
@@ -187,9 +187,14 @@ public class Network implements Serializable {
 		// vytvorit vystupni vrstvu
 		outputLayer = new OutputLayer(OUTPUT_SIZE);
 		// napojit posledni hidden vrstvu na vystupni
+		//System.out.println("OutputLayer.size():" + outputLayer.size());
+		//System.out.println("OUTPUT_SIZE:" + OUTPUT_SIZE);
+		//System.out.println("lastLayerIndex:" + previousLayer.getLayerIndex());
+		//System.out.println("hiddenLayerSize:" + hiddenLayerSize);
 		for (int j = 0; j < hiddenLayerSize; j++) {
 			HiddenNode previousLayerNode = previousLayer.getNode(j);
-			for (int k = 0; k < hiddenLayerSize; k++) {
+			for (int k = 0; k < OUTPUT_SIZE; k++) {
+				//System.out.println("k:" + k);
 				previousLayerNode.addNextLayerONode(outputLayer.getNode(k));
 			}
 		}
@@ -245,11 +250,13 @@ public class Network implements Serializable {
 				adjustWeights();
 			}
 			iterations++;
-			System.out.println("iteration:" + iterations);
+			//System.out.println("iteration:" + iterations);
+			System.out.println("trainError" + trainError);
 		}
 		//inputManager.closeTrainData();
 		serializeNetwork();
 		learningMode = false;
+		
 	}
 
 	/**

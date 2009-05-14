@@ -34,4 +34,9 @@ public class HiddenLayer implements Serializable {
 		}
 	}
 
+	//testovaci metoda
+	public int getLayerIndex() {
+		return layerIndex;
+	}
+
 }

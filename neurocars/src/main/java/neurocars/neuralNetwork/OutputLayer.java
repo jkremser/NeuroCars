@@ -28,4 +28,8 @@ public class OutputLayer implements Serializable{
 			node.computeOutput();
 		}
 	}
+	
+	public int size(){
+		return nodes.size();
+	}
 }
