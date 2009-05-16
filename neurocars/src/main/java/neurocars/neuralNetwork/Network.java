@@ -46,6 +46,9 @@ public class Network implements Serializable {
 	private transient int maxIterations;
 	private transient int iterations;
 
+	// ladeni
+	private int iterationStep = 1;
+
 	// stav site
 	private boolean learningMode = true;
 
@@ -107,6 +110,7 @@ public class Network implements Serializable {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("learnigMode: " + net.learningMode);
 		return net;
 	}
 
@@ -189,6 +193,8 @@ public class Network implements Serializable {
 	 */
 	public void learn() {
 		// System.out.println("endcondition" + endCondition);
+		System.out.println("iteration:" + iterations);
+		System.out.println("trainError: " + trainError);
 		if (inputManager == null) {
 			throw new IllegalStateException("InputManager not set yet");
 		}
@@ -214,13 +220,15 @@ public class Network implements Serializable {
 				adjustWeights();
 			}
 			iterations++;
-			System.out.println("iteration:" + iterations);
-			System.out.println("trainError: " + trainError);
+			if (iterations % iterationStep == 0 || iterations == 1) {
+				System.out.println("iteration:" + iterations);
+				System.out.println("trainError: " + trainError);
+			}
 		}
 		// inputManager.closeTrainData();
 		serializeNetwork();
 		learningMode = false;
-		// System.out.println("iteration:" + iterations);
+		System.out.println("iteration:" + iterations);
 		System.out.println(outputLayer);
 	}
 
@@ -343,6 +351,7 @@ public class Network implements Serializable {
 			// + Math.pow(item.getOutput(i) - node.getOutput(), 2));
 		}
 		// System.out.println("Single item error:" + error);
+		// System.out.println("------------------------------------");
 		return error;
 	}
 
@@ -444,6 +453,10 @@ public class Network implements Serializable {
 
 	public boolean isLearningMode() {
 		return learningMode;
+	}
+
+	public void setIterationStep(int iterationStep) {
+		this.iterationStep = iterationStep;
 	}
 
 }

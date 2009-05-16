@@ -87,12 +87,13 @@ public class MrsTeacher {
 				}
 			}
 			Network net = Network.loadNetwork(network);
-			net.setMaxIterations(maxIter);
-			if (args.length == 8) {
-				net.setInputManager(new InputManagerImpl(trainFile, testFile));
-			} else {
-				net.setInputManager(new InputManagerImpl(trainFile));
-			}
+			// a toto je na co? kdyz uz je naucena, zadny vstup nepotrebuje....
+			// net.setMaxIterations(maxIter);
+			// if (args.length == 8) {
+			// net.setInputManager(new InputManagerImpl(trainFile, testFile));
+			// } else {
+			// net.setInputManager(new InputManagerImpl(trainFile));
+			// }
 
 			System.out.println(net);
 
