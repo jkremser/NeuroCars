@@ -76,24 +76,39 @@ public class InputNode implements Serializable {
 		for (int i = 0; i < nextLayerNodes.size(); i++) {
 			HiddenNode hidNode = nextLayerNodes.get(i);
 			hidNode.addWeightedInput(getWeighteOutput(i));
-			// tady se to zbytecne pocita nekolikrat
-			// radsi predpocitat, pak ale vyresit inicializaci pro dalsi vstup!
 		}
 	}
 
 	/**
 	 * Upravi vahu pro kazdy neuron nasledujici skryte vrstvy (podle hodnoty
 	 * jeho chyby a vstupu do nej)
+	 * 
+	 * @param iteration
+	 *            iterace, ve ktere se uceni nachazi
 	 */
-	public void adjustWeights() {
+	public void adjustWeights(int iteration) {
 		double deltaW;
 		double newW;
 		for (int i = 0; i < nextLayerNodes.size(); i++) {
-			deltaW = Constants.getLearningConstant()
+			deltaW = Constants.getLearningConstant(iteration)
 					* nextLayerNodes.get(i).getError() * input;
 			newW = nextLayerNodesWeights.get(i) + deltaW;
 			nextLayerNodesWeights.set(i, newW);
 		}
 	}
 
+	public String toString() {
+		StringBuilder value = new StringBuilder();
+		// value.append("nodes:\n[");
+		// for (HiddenNode node : nextLayerNodes) {
+		// value.append(node);
+		// }
+		value.append("]\nweights:\n[");
+		for (Double weight : nextLayerNodesWeights) {
+			value.append(weight);
+			value.append(",");
+		}
+		value.append("]\n");
+		return value.toString();
+	}
 }

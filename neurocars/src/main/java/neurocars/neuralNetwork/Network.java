@@ -45,7 +45,7 @@ public class Network implements Serializable {
 	private transient double trainError;
 	private transient double tresholdError;
 	private transient int maxIterations;
-	private transient int iterations;
+	private transient int iteration;
 
 	// ladeni
 	private int iterationStep = 1;
@@ -131,6 +131,7 @@ public class Network implements Serializable {
 					(i == (hiddenLayersNumber - 1)));
 			hiddenLayers.add(layer);
 
+			// System.out.println("Hidden layer #" + i);
 			// vsechny neurony predchozi vrstvy napojime na tyto neurony
 			if (i == 0) {// previous layer is input
 				for (int j = 0; j < INPUT_SIZE; j++) {
@@ -196,17 +197,18 @@ public class Network implements Serializable {
 	 */
 	public void learn() {
 		// System.out.println("endcondition" + endCondition);
-		System.out.println("iteration:" + iterations);
+		System.out.println("iteration:" + iteration);
 		System.out.println("trainError: " + trainError);
 		if (inputManager == null) {
 			throw new IllegalStateException("InputManager not set yet");
 		}
 		inputManager.initTrainData();
 		initNetwork();
+		System.out.println(this);
 		DataItem item;
-		iterations = 0;
+		iteration = 0;
 		// System.out.println("endcondition:" + endConditionFulfilled());
-		while (!endConditionFulfilled() || iterations == 0) {
+		while (!endConditionFulfilled() || iteration == 0) {
 			// pred prvni iteraci je totiz trainError 0 < tresholdError a proto
 			// i endConditionFulfilled() je true
 			if (endCondition == EndConditionType.TRAIN_ERROR) {
@@ -220,18 +222,18 @@ public class Network implements Serializable {
 					updateTrainError(item);
 				}
 				propagateError(item);
-				adjustWeights();
+				adjustWeights(iteration);
 			}
-			iterations++;
-			if (iterations % iterationStep == 0 || iterations == 1) {
-				System.out.println("iteration:" + iterations);
+			iteration++;
+			if (iteration % iterationStep == 0 || iteration == 1) {
+				System.out.println("iteration:" + iteration);
 				System.out.println("trainError: " + trainError);
 			}
 		}
 		// inputManager.closeTrainData();
 		learningMode = false;
 		serializeNetwork();
-		System.out.println("iteration:" + iterations);
+		System.out.println("iteration:" + iteration);
 		System.out.println(outputLayer);
 	}
 
@@ -257,15 +259,18 @@ public class Network implements Serializable {
 	/**
 	 * Zmeni se vahy podle jednotlivych chyb. Vahu si pamatuje vzdy PREDCHOZI
 	 * vrstva, proto volame jen pro input a hidden
+	 * 
+	 * @param iteration
+	 *            iterace, ve ktere se uceni nachazi
 	 */
-	public void adjustWeights() {
+	private void adjustWeights(int iteration) {
 		for (int i = 0; i < INPUT_SIZE; i++) {
-			inputLayer.getNode(i).adjustWeights();
+			inputLayer.getNode(i).adjustWeights(iteration);
 		}
 		for (int i = 0; i < hiddenLayers.size(); i++) {
 			HiddenLayer layer = hiddenLayers.get(i);
 			for (int j = 0; j < hiddenLayerSize; j++) {
-				layer.getNode(j).adjustWeights();
+				layer.getNode(j).adjustWeights(iteration);
 			}
 		}
 	}
@@ -295,7 +300,7 @@ public class Network implements Serializable {
 	 */
 	private boolean endConditionFulfilled() {
 		// System.out.println("maxIterations:" + maxIterations);
-		boolean condition = (iterations == maxIterations);
+		boolean condition = (iteration == maxIterations);
 		// System.out.println("condition:" + condition);
 		if (endCondition == EndConditionType.TRAIN_ERROR) {
 			// System.out.println("trainError" + trainError);
@@ -410,9 +415,8 @@ public class Network implements Serializable {
 	}
 
 	public String toString() {
-		String retString = "NEURAL NETWORK\n\noutput file: "
-				+ outputFile.getAbsolutePath();
-		retString += "\ninputManager: " + inputManager;
+		String retString = "output file: " + outputFile.getAbsolutePath();
+		// retString += "\ninputManager:\n" + inputManager;
 		retString += "\nhiddenLayersNumber: " + hiddenLayersNumber;
 		retString += "\nhiddenLayerSize: " + hiddenLayerSize;
 		retString += "\ninputLayer: " + inputLayer;
@@ -422,7 +426,7 @@ public class Network implements Serializable {
 		retString += "\ntrainError: " + trainError;
 		retString += "\ntresholdError: " + tresholdError;
 		retString += "\nmaxIterations: " + maxIterations;
-		retString += "\niterations: " + iterations;
+		retString += "\niterations: " + iteration;
 		retString += "\nlearningMode: " + learningMode;
 		return retString;
 	}

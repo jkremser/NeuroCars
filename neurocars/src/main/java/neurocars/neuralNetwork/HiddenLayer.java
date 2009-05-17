@@ -34,9 +34,18 @@ public class HiddenLayer implements Serializable {
 		}
 	}
 
-	//testovaci metoda
+	// testovaci metoda
 	public int getLayerIndex() {
 		return layerIndex;
 	}
 
+	public String toString() {
+		StringBuilder value = new StringBuilder();
+		value.append("nodes:\n[");
+		for (HiddenNode node : nodes) {
+			value.append(node);
+		}
+		value.append("]\n");
+		return value.toString();
+	}
 }

@@ -75,6 +75,7 @@ public class InputManagerImpl implements InputManager {
 	 */
 	public void closeTrainData() {
 		trainData = null;
+
 	}
 
 	/*
@@ -236,7 +237,7 @@ public class InputManagerImpl implements InputManager {
 	}
 
 	public String toString() {
-		return "TRAINDATA:" + trainData + "\n\nTESTDATA:" + testData;
+		return "TRAINDATA:" + trainData + "\nTESTDATA:" + testData;
 	}
 
 	/**

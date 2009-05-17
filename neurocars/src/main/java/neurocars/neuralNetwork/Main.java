@@ -22,8 +22,8 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		realMain(args);
-		// myTest();
+		// realMain(args);
+		myTest();
 	}
 
 	public static void realMain(String[] args) {
@@ -180,13 +180,13 @@ public class Main {
 	public static void myTest() {
 		File trainFile = new File("C:\\neurocars\\player1_replay-freon.txt");
 		File outputFile = new File("C:\\neurocars\\network");
-		double tresholdError = 965;
-		int hiddenLayersNumber = 2;
-		int hiddenLayerSize = 15;
+		double tresholdError = 500;
+		int hiddenLayersNumber = 1;
+		int hiddenLayerSize = 6;
 		double learningConstant = 0.002;
-		int maxIterations = 1000;
+		int maxIterations = 1;
 		// vystup
-		int iterationStep = 50; // po kolika iteracich se vypise trainError
+		int iterationStep = 20; // po kolika iteracich se vypise trainError
 
 		InputManager iManager = new InputManagerImpl(trainFile);
 		// InputManager iManager = new InputManagerDumbImpl();
