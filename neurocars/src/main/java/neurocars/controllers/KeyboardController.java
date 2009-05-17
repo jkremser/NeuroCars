@@ -1,5 +1,7 @@
 package neurocars.controllers;
 
+import neurocars.entities.Car;
+
 /**
  * Klavesnicovy ovladac zavodniho auta
  * 
@@ -31,7 +33,7 @@ public class KeyboardController extends Controller {
    * 
    * @see neurocars.controllers.Controller#next()
    */
-  public void next() {
+  public void next(Car car) {
     // NOOP
   }
 

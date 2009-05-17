@@ -1,5 +1,6 @@
 package neurocars.controllers;
 
+import neurocars.entities.Car;
 import neurocars.utils.ServiceException;
 
 /**
@@ -10,7 +11,7 @@ import neurocars.utils.ServiceException;
  */
 public abstract class Controller {
 
-  public abstract void next() throws ServiceException;
+  public abstract void next(Car car) throws ServiceException;
 
   public abstract boolean accelerate();
 
@@ -21,8 +22,8 @@ public abstract class Controller {
   public abstract boolean right();
 
   public String toString() {
-    return (accelerate() ? 1 : 0) + ";" + (brake() ? 1 : 0) + ";"
-        + (left() ? 1 : 0) + ";" + (right() ? 1 : 0);
+    int speed = (accelerate() ? 1 : 0) - (brake() ? 1 : 0);
+    int turn = (right() ? 1 : 0) - (left() ? 1 : 0);
+    return speed + ";" + turn;
   }
-
 }

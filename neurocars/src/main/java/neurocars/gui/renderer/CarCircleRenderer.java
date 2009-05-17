@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import neurocars.entities.Car;
+import neurocars.valueobj.WayPoint;
 
 public class CarCircleRenderer implements ICarRenderer {
 
@@ -19,11 +20,16 @@ public class CarCircleRenderer implements ICarRenderer {
     g.drawLine(x, y, (int) (x + length * Math.cos(car.getAngle())),
         (int) (y + length * Math.sin(car.getAngle())));
 
-    // g.setColor(Color.GREEN);
-    double steeringAngle = car.getAngle() + car.getSteeringWheel()
-        * car.getSetup().getSteeringPower();
-    g.drawLine(x, y, (int) (x + length * Math.cos(steeringAngle)),
-        (int) (y + length * Math.sin(steeringAngle)));
+    WayPoint nextWayPoint = car.getGame().getTrack().getWayPoints().get(
+        car.getNextWayPoint());
+    double nextWayPointAngle = Math.atan2(nextWayPoint.getY() - car.getY(),
+        nextWayPoint.getX() - car.getX());
+
+    g.setColor(Color.YELLOW);
+    // double steeringAngle = car.getAngle() + car.getSteeringWheel()
+    // * car.getSetup().getSteeringPower();
+    g.drawLine(x, y, (int) (x + length * Math.cos(nextWayPointAngle) / 2),
+        (int) (y + length * Math.sin(nextWayPointAngle) / 2));
   }
 
   public void erase(Graphics g, Car car, BufferedImage background) {

@@ -12,55 +12,45 @@ import neurocars.valueobj.NeuralNetworkOutput;
  */
 public class NeuroController extends Controller {
 
-	private Car car;
-	private NeuralNetworkOutput out;
-	private Network net;
+  private NeuralNetworkOutput out;
+  private Network net;
+  private double threshold;
 
-	public NeuroController(Network net) {
-		System.out.println(net);
-		this.net = net;
-	}
+  public NeuroController(Network net, double threshold) {
+    // net.setLearningMode(false);
+    this.net = net;
+    this.threshold = threshold;
+  }
 
-	public void next() {
-		NeuralNetworkInput in = car.getNeuralNetworkInput();
-		boolean flip = false;
-		if (in.getCurveAngle() < 0) { // zaporny uhel zatacky, musime klopit
-			flip = true;
-			in.setCurveAngle(-in.getCurveAngle());
-			in.setWayPointAngle(-in.getWayPointAngle());
-			in.setSteeringWheel(-in.getSteeringWheel());
-		}
-		this.out = net.runNetwork(in);
-		if (flip) {
-			boolean aux = out.isLeft();
-			out.setLeft(out.isRight());
-			out.setRight(aux);
-		}
-		System.out.println(out);
-	}
+  public void next(Car car) {
+    NeuralNetworkInput in = car.getNeuralNetworkInput();
+    boolean flip = (in.getCurveAngle() < 0);
+    if (flip) { // zaporny uhel zatacky, musime klopit
+      in.setCurveAngle(-in.getCurveAngle());
+      in.setWayPointAngle(-in.getWayPointAngle());
+      in.setSteeringWheel(-in.getSteeringWheel());
+    }
+    this.out = net.runNetwork(in);
+    if (flip) {
+      out.setTurn(-out.getTurn());
+    }
+    System.out.println(out);
+  }
 
-	public boolean accelerate() {
-		return out.isAccelerate();
-	}
+  public boolean accelerate() {
+    return out.getSpeed() > threshold;
+  }
 
-	public boolean brake() {
-		return out.isBrake();
-	}
+  public boolean brake() {
+    return out.getSpeed() < -threshold;
+  }
 
-	public boolean left() {
-		return out.isLeft();
-	}
+  public boolean left() {
+    return out.getTurn() < -threshold;
+  }
 
-	public boolean right() {
-		return out.isRight();
-	}
-
-	public void setCar(Car car) {
-		this.car = car;
-	}
-
-	public Car getCar() {
-		return car;
-	}
+  public boolean right() {
+    return out.getTurn() > threshold;
+  }
 
 }

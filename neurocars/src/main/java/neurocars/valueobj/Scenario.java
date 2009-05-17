@@ -30,7 +30,7 @@ public class Scenario {
 
   public static final String CONTROLLER_KEYBOARD = "keyboard";
   public static final String CONTROLLER_REPLAY = "replay";
-  public static final String CONTROLLER_NETWORK = "neuro";
+  public static final String CONTROLLER_NEURO = "neuro";
 
   private final int xScreenSize;
   private final int yScreenSize;
@@ -107,11 +107,13 @@ public class Scenario {
 
         ReplayController rc = new ReplayController(replayFile);
         c = rc;
-      } else if (CONTROLLER_NETWORK.equals(p.getProperty(controllerKey))) {
+      } else if (CONTROLLER_NEURO.equals(p.getProperty(controllerKey))) {
         String path = p.getProperty(controllerKey + ".config");
+        // double threshold = AppUtils.getDoubleValue(p, controllerKey +
+        // ".threshold");
         File netFile = new File("config/neuralnetwork/" + path);
         Network net = Network.loadNetwork(netFile);
-        NeuroController nc = new NeuroController(net);
+        NeuroController nc = new NeuroController(net, 0.8); // TODO threshold
         c = nc;
       } else {
         throw new ServiceException("unknown value: " + controllerKey + "="

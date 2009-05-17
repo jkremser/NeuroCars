@@ -55,46 +55,51 @@ public class Transformer {
    * @param outputDI
    * @return
    */
-  public static NeuralNetworkOutput DataItemToNnOutput(DataItem outputDI) {
+  public static NeuralNetworkOutput dataItemToNnOutput(DataItem outputDI) {
     NeuralNetworkOutput nnOutput = new NeuralNetworkOutput();
+
+    nnOutput.setSpeed(outputDI.getOutput(0));
+    nnOutput.setTurn(outputDI.getOutput(1));
+
     // plyn
-    if (closerToOne(outputDI.getOutput(0))) {
-      nnOutput.setAccelerate(true);
-    } else {
-      nnOutput.setAccelerate(false);
-    }
-    // brzda
-    if (closerToOne(outputDI.getOutput(1))) {
-      nnOutput.setBrake(true);
-    } else {
-      nnOutput.setBrake(false);
-    }
-    // doleva
-    if (closerToOne(outputDI.getOutput(2))) {
-      nnOutput.setLeft(true);
-    } else {
-      nnOutput.setLeft(false);
-    }
-    // doprava
-    if (closerToOne(outputDI.getOutput(3))) {
-      nnOutput.setRight(true);
-    } else {
-      nnOutput.setRight(false);
-    }
+    // if (closerToOne(outputDI.getOutput(0))) {
+    // nnOutput.setAccelerate(true);
+    // } else {
+    // nnOutput.setAccelerate(false);
+    // }
+    // // brzda
+    // if (closerToOne(outputDI.getOutput(1))) {
+    // nnOutput.setBrake(true);
+    // } else {
+    // nnOutput.setBrake(false);
+    // }
+    //
+    // // doleva
+    // if (closerToOne(outputDI.getOutput(2))) {
+    // nnOutput.setLeft(true);
+    // } else {
+    // nnOutput.setLeft(false);
+    // }
+    // // doprava
+    // if (closerToOne(outputDI.getOutput(3))) {
+    // nnOutput.setRight(true);
+    // } else {
+    // nnOutput.setRight(false);
+    // }
     return nnOutput;
   }
 
-  /**
-   * Rozhodne, zda double hodnota je blize k 0 nebo 1
-   * 
-   * @param value
-   * @return true pokud je blize k 1, false pokud je blize k 0
-   */
-  private static boolean closerToOne(double value) {
-    if (value > 0.5) { // vychytat
-      return true;
-    }
-    return false;
-  }
+  // /**
+  // * Rozhodne, zda double hodnota je blize k 0 nebo 1
+  // *
+  // * @param value
+  // * @return true pokud je blize k 1, false pokud je blize k 0
+  // */
+  // private static boolean closerToOne(double value) {
+  // if (Math.abs(1 - value) < 0.68) { // vychytat
+  // return true;
+  // }
+  // return false;
+  // }
 
 }

@@ -8,45 +8,26 @@ package neurocars.valueobj;
  */
 public class NeuralNetworkOutput {
 
-  private boolean accelerate;
-  private boolean brake;
-  private boolean left;
-  private boolean right;
-
-  public boolean isAccelerate() {
-    return accelerate;
-  }
-
-  public void setAccelerate(boolean accelerate) {
-    this.accelerate = accelerate;
-  }
-
-  public boolean isBrake() {
-    return brake;
-  }
-
-  public void setBrake(boolean brake) {
-    this.brake = brake;
-  }
-
-  public boolean isLeft() {
-    return left;
-  }
-
-  public void setLeft(boolean left) {
-    this.left = left;
-  }
-
-  public boolean isRight() {
-    return right;
-  }
-
-  public void setRight(boolean right) {
-    this.right = right;
-  }
+  private double speed;
+  private double turn;
 
   public String toString() {
-    return "LEVO: " + left + "  PRAVO: " + right + "  VPRED: " + accelerate
-        + "  VZAD: " + brake;
+    return "[speed=" + speed + ";turn=" + turn + "]";
+  }
+
+  public double getSpeed() {
+    return speed;
+  }
+
+  public void setSpeed(double speed) {
+    this.speed = speed;
+  }
+
+  public double getTurn() {
+    return turn;
+  }
+
+  public void setTurn(double turn) {
+    this.turn = turn;
   }
 }

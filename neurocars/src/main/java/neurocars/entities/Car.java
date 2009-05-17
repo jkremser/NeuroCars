@@ -75,7 +75,7 @@ public class Car extends Entity {
    * @throws ServiceException
    */
   public void processInput() throws ServiceException {
-    controller.next();
+    controller.next(this);
 
     if (finished) {
       // jestli jsem dojel, tak uz jenom zabrzdim
@@ -202,6 +202,13 @@ public class Car extends Entity {
     if (replayLog == null) {
       throw new ServiceException("Log not opened!");
     }
+    // nezapisujeme nic pokud se nehybu a nic nemackam nebo zavod je ukoncen
+    if ((getSpeed() == 0 && (controller.accelerate() || controller.brake()
+        || controller.left() || controller.right()) == false)
+        || isFinished()) {
+      return;
+    }
+
     try {
       replayLog.write(controller.toString() + ";"
           + getNeuralNetworkInput().toString());

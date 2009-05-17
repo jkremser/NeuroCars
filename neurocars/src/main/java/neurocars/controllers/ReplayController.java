@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import neurocars.entities.Car;
 import neurocars.utils.ServiceException;
 
 /**
@@ -36,7 +37,7 @@ public class ReplayController extends Controller {
    * 
    * @see neurocars.controllers.Controller#next()
    */
-  public void next() throws ServiceException {
+  public void next(Car car) throws ServiceException {
     try {
       if (!replay.ready()) {
         return;
