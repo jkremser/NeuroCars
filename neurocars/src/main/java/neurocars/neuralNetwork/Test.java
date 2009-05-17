@@ -11,7 +11,7 @@ public class Test {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		File trainFile = new File("C:\\neurocars\\player1_replay-freon.txt");
+		File trainFile = new File("C:\\neurocars\\player1_replay.txt");
 		File outputFile = new File("C:\\neurocars\\network");
 		double tresholdError = 500;
 		int hiddenLayersNumber = 1;
@@ -30,6 +30,7 @@ public class Test {
 		network.setInputManager(iManager);
 		network.setIterationStep(iterationStep);
 		network.learn();
+		System.out.println(iManager);
 	}
 
 }

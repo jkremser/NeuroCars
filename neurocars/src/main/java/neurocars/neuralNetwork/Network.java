@@ -200,7 +200,7 @@ public class Network implements Serializable {
     }
     inputManager.initTrainData();
     initNetwork();
-    System.out.println(this);
+    //System.out.println(this);
     DataItem item;
     iteration = 0;
     // System.out.println("endcondition:" + endConditionFulfilled());

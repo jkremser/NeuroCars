@@ -65,7 +65,7 @@ public class InputManagerImpl implements InputManager {
 	 */
 	public void resetTrainData() {
 		trainItemCounter = 0;
-		Collections.shuffle(trainData);
+		//Collections.shuffle(trainData);
 	}
 
 	/**
@@ -210,18 +210,32 @@ public class InputManagerImpl implements InputManager {
 					}
 					i++;
 				}
-				if (item.getInput(4) < 0) { // uhle zatacky je zaporny
-					item.setInput(1, -item.getInput(1)); // prevraceni znamenka
+				/*if (item.getInput(4) < 0) { // uhle zatacky je zaporny
+					DataItem newItem = new DataItem(Network.INPUT_SIZE,Network.OUTPUT_SIZE);
+					for(int j=0; j<Network.INPUT_SIZE; j++){
+						newItem.addInputValue(item.getInput(j));
+					}
+					for(int j=0; j<Network.OUTPUT_SIZE; j++){
+						newItem.addOutputValue(item.getOutput(j));
+					}
+					newItem.setInput(1, -item.getInput(1)); // prevraceni znamenka
 					// u otoceni
 					// volantu
-					item.setInput(3, -item.getInput(3)); // prevraceni znamenka
+					newItem.setInput(3, -item.getInput(3)); // prevraceni znamenka
 					// u uhlu k
 					// nasledujicimu bodu
-					double aux = item.getOutput(3);
-					item.setOutput(3, item.getOutput(2)); // prohodi doleva a
+
+					double direction = item.getOutput(1);
+					double newDirection = 0;
+					if (direction == -1) {
+						newDirection = 1;
+					} else if (direction == 1) {
+						newDirection = -1;
+					}
+					newItem.setOutput(1, newDirection);// prohodi doleva a
 					// doprava
-					item.setOutput(2, aux);
-				}
+					data.add(newItem);
+				}*/
 				data.add(item);
 			}
 		} catch (IOException e) {
