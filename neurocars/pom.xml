@@ -58,7 +58,7 @@
 	        </descriptorRefs>
             <archive>
               <manifest>
-                <mainClass>neurocars.Game</mainClass>
+                <mainClass>neurocars.Main</mainClass>
               </manifest>
             </archive>
 	      </configuration>
