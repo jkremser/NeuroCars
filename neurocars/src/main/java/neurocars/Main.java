@@ -24,7 +24,7 @@ public class Main {
 
   public static void printHelp(Options options) {
     HelpFormatter help = new HelpFormatter();
-    help.printHelp("neurocars", options);
+    help.printHelp("neurocars", options, true);
   }
 
   /**
@@ -38,6 +38,14 @@ public class Main {
         "neural network training input file [train mode]");
     options.addOption("output", true,
         "serialized neural network output file [train mode]");
+    options.addOption("threshold", true, "error threshold [train mode]");
+    options.addOption("layers", true, "hidden layers count [train mode]");
+    options.addOption("neurons", true,
+        "number of neurons in every hidden layer [train mode]");
+    options.addOption("learningconstant", true,
+        "learning constant [train mode]");
+    options.addOption("iterations", true,
+        "maximum iterations count [train mode]");
     options.addOption("help", false, "print this help");
 
     CommandLineParser parser = new PosixParser();
@@ -60,15 +68,20 @@ public class Main {
         requiredParameter(line, "output", options);
 
         File inputFile = new File(line.getOptionValue("input"));
+        // TODO: jak zadat vstup?
         File outputFile = new File(line.getOptionValue("output"));
-        // TODO: konstanty .. nacist z parametru
-        double tresholdError = 0.5;
-        int hiddenLayersNumber = 1;
-        int hiddenLayerSize = 10;
-        double learningConstant = 0.2;
-        int maxIterations = 100000;
-        Network network = new Network(tresholdError, outputFile,
-            hiddenLayersNumber, hiddenLayerSize, learningConstant,
+        double thresholdError = Double.valueOf(line.getOptionValue("threshold",
+            "0.5"));
+        int hiddenLayersNumber = Integer.valueOf(line.getOptionValue("layers",
+            "1"));
+        int hiddenLayerNeurons = Integer.valueOf(line.getOptionValue("neurons",
+            "10"));
+        double learningConstant = Double.valueOf(line.getOptionValue(
+            "learningconstant", "0.5"));
+        int maxIterations = Integer.valueOf(line.getOptionValue("iterations",
+            "10000"));
+        Network network = new Network(thresholdError, outputFile,
+            hiddenLayersNumber, hiddenLayerNeurons, learningConstant,
             maxIterations);
         network.learn();
       } else if ("race".equals(mode)) {
