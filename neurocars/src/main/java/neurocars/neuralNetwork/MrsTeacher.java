@@ -96,15 +96,6 @@ public class MrsTeacher {
 			// }
 
 			System.out.println(net);
-
-			// net.initNetwork();
-			/*
-			 * tady mi to padalo, asi proto, ze jsem tam tu sit inicioval Fatal
-			 * application exception: null java.lang.NullPointerException at
-			 * neurocars
-			 * .neuralNetwork.InputNode.addNextLayerNode(InputNode.java:36)
-			 */
-			// net.learn();
 		}
 	}
 

@@ -32,6 +32,7 @@ public class Network implements Serializable {
 	// network
 	public static final int INPUT_SIZE = 5;
 	public static final int OUTPUT_SIZE = 4;
+	public transient static final int DEFAULT_HIDDEN_LAYERS_NUMBER = 1;
 	private int hiddenLayersNumber;
 	private int hiddenLayerSize;
 	private InputLayer inputLayer;
@@ -39,7 +40,7 @@ public class Network implements Serializable {
 	private OutputLayer outputLayer;
 
 	// learning
-	private transient static final double DEFAULT_LEARNING_CONSTANT = 0.1;
+	public transient static final double DEFAULT_LEARNING_CONSTANT = 0.1;
 	private transient EndConditionType endCondition;
 	private transient double trainError;
 	private transient double tresholdError;
@@ -50,7 +51,7 @@ public class Network implements Serializable {
 	private int iterationStep = 1;
 
 	// stav site
-	private boolean learningMode = true;
+	private boolean learningMode;
 
 	/**
 	 * Konstruktor site. Pred samotnym trenovanim je jeste treba zavolat metodu
@@ -110,6 +111,7 @@ public class Network implements Serializable {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("loadnig network from file");
 		System.out.println("learnigMode: " + net.learningMode);
 		return net;
 	}
@@ -118,6 +120,7 @@ public class Network implements Serializable {
 	 * Vytvori samotnou sit
 	 */
 	private void initNetwork() {
+		learningMode = true;
 		inputLayer = new InputLayer(INPUT_SIZE, hiddenLayerSize);
 		hiddenLayers = new ArrayList<HiddenLayer>(1);
 		HiddenLayer layer;
@@ -226,8 +229,8 @@ public class Network implements Serializable {
 			}
 		}
 		// inputManager.closeTrainData();
-		serializeNetwork();
 		learningMode = false;
+		serializeNetwork();
 		System.out.println("iteration:" + iterations);
 		System.out.println(outputLayer);
 	}
@@ -290,7 +293,7 @@ public class Network implements Serializable {
 	 * 
 	 * @return true pokud je podminka splnena, false jinak
 	 */
-	public boolean endConditionFulfilled() {
+	private boolean endConditionFulfilled() {
 		// System.out.println("maxIterations:" + maxIterations);
 		boolean condition = (iterations == maxIterations);
 		// System.out.println("condition:" + condition);

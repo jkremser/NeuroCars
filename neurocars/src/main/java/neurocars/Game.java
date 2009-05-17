@@ -297,16 +297,11 @@ public class Game {
 				: "./config/scenario/scenario-1player.properties");
 		System.out.println("config =" + scenario);
 		try {
-			if (args.length <= 1) {
-				Network net = Network.loadNetwork(new File(
-						"C:\\neurocars\\network"));
-				Game g = new Game(scenario, new NeuroController(net));
-				System.out
-						.println("????????????????????????????????????????????");
-				g.run();
-			} else {
-				new MrsTeacher(args).learn();
-			}
+			// Network net = Network
+			// .loadNetwork(new File("C:\\neurocars\\network"));
+			// Game g = new Game(scenario, new NeuroController(net));
+			Game g = new Game(scenario);
+			g.run();
 		} catch (Exception e) {
 			System.err
 					.println("Fatal application exception: " + e.getMessage());
