@@ -44,10 +44,10 @@ public class ReplayController extends Controller {
       }
       if ((row = replay.readLine()) != null) {
         String[] tokens = row.split(";");
-        accelerate = !"0".equals(tokens[0]);
-        brake = !"0".equals(tokens[1]);
-        left = !"0".equals(tokens[2]);
-        right = !"0".equals(tokens[3]);
+        accelerate = "1".equals(tokens[0]);
+        brake = "-1".equals(tokens[0]);
+        left = "-1".equals(tokens[1]);
+        right = "1".equals(tokens[1]);
       } else {
         accelerate = false;
         brake = false;
