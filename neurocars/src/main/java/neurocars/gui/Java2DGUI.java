@@ -14,6 +14,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferStrategy;
@@ -56,6 +57,13 @@ public class Java2DGUI implements IGUI {
 
   // titulek okna
   private static final String TITLE = "ne_uroc/ars";
+
+  // Velikost okrajoveho pasu a stredovych sipek
+  private static final int FlankWidth = 30,
+          FlankHeight = 3,
+          ArrowSize = 30;
+  // zkoseni sipky (uhel v radianech)
+  private static final double ArrowSkew = Math.PI/4;
 
   private boolean waitingForKeyPress = false;
   private BufferStrategy strategy;
@@ -192,7 +200,7 @@ public class Java2DGUI implements IGUI {
    * @param track
    * @return
    */
-  private BufferedImage drawBackground(Track track) {
+  private BufferedImage drawBackground(Track track) throws ServiceException {
     //
     // Vrstvy:
     //   - kruhy
@@ -224,12 +232,13 @@ public class Java2DGUI implements IGUI {
     glcircles.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON);
 
-    // cerne pozadi
-    glroad.setColor(Color.BLACK);
-    glroad.setBackground(Color.BLACK);
+    // Pozadi
+    glroad.setColor(new Color(0x316a31));
+    glroad.setBackground(new Color(0x316a31));
     glroad.fillRect(0, 0, background.getWidth(), background.getHeight());
 
-    // Cesta
+    this.drawTile(background, "noise2.png");
+
     for (int p = 0; p < track.getWayPoints().size(); p++) {
       WayPoint pt = track.getWayPoints().get(p);
       WayPoint ptp = track.getWayPoints()
@@ -246,6 +255,7 @@ public class Java2DGUI implements IGUI {
       double len = dir.distance(0,0);
       dir.setLocation(dir.getX()/len, dir.getY()/len);
 
+      // Cesta
       int[] xRoad = new int[] {
           (int)(pt.getX() - dir.getY()*pt.getSize()/2),
           (int)(pt.getX() + dir.getY()*pt.getSize()/2),
@@ -262,12 +272,6 @@ public class Java2DGUI implements IGUI {
       glroad.setColor(Color.GRAY);
       glroad.fillPolygon(xRoad, yRoad, xRoad.length);
       glroad.fill(circle);
-      // TODO: apply some noise?
-
-      // Okraj cesty
-      glborder.setColor(Color.WHITE);
-      //glborder.drawLine(xRoad[0], yRoad[0], xRoad[3], yRoad[3]);
-      //glborder.drawLine(xRoad[1], yRoad[1], xRoad[2], yRoad[2]);
 
       // Kruhy
       glcircles.setColor(new Color(0.5f, 0.5f, 0.5f, 0.7f));
@@ -278,8 +282,6 @@ public class Java2DGUI implements IGUI {
 
       // Stredove sipky
       glarrows.setColor(Color.YELLOW);
-      int ArrowSize = 30; // XXX constants!
-      double ArrowSkew = Math.PI/4; // zkoseni sipky (uhel v radianech)
       double rest = len;
       //rest -= pt.getSize()/2 + ptp.getSize()/2;
       Point2D.Double arrpt = new Point2D.Double(
@@ -319,9 +321,6 @@ public class Java2DGUI implements IGUI {
             arrpt.getY() + dir.getY()*2*ArrowSize);
       }
 
-      int FlankWidth = 30; // XXX constants!
-      int FlankHeight = 3; // XXX constants!
-
       Point2D.Double flnkptL = new Point2D.Double(
           pt.getX() + dir.getY()*pt.getSize()/2,
           pt.getY() - dir.getX()*pt.getSize()/2);
@@ -343,9 +342,8 @@ public class Java2DGUI implements IGUI {
       double lenR = dirR.distance(0,0);
       dirR.setLocation(dirR.getX()/lenR, dirR.getY()/lenR);
 
-      //System.out.println(dir);
-      //System.out.println(dirL);
-      //System.out.println(dirR);
+      // Okraj cesty
+      glborder.setColor(Color.WHITE);
 
       rest = lenL; // (melo by lenL == lenR)
       while (rest > 0) {
@@ -393,9 +391,11 @@ public class Java2DGUI implements IGUI {
       }
     }
 
-    glroad.drawRenderedImage(layer, new java.awt.geom.AffineTransform());
-    glroad.drawRenderedImage(layer2, new java.awt.geom.AffineTransform());
-    glroad.drawRenderedImage(layer3, new java.awt.geom.AffineTransform());
+    glroad.drawRenderedImage(layer, new AffineTransform());
+    glroad.drawRenderedImage(layer2, new AffineTransform());
+    glroad.drawRenderedImage(layer3, new AffineTransform());
+
+    this.drawTile(background, "noise.png");
 
     glroad.dispose();
     glborder.dispose();
@@ -403,6 +403,29 @@ public class Java2DGUI implements IGUI {
     glcircles.dispose();
 
     return background;
+  }
+
+  private void drawTile(BufferedImage img, String file) throws ServiceException {
+    java.io.InputStream is = this.getClass().getClassLoader().getResourceAsStream(file);
+    BufferedImage tile = null;
+    try {
+      tile = javax.imageio.ImageIO.read(is);
+    } catch(java.io.IOException e) {
+      throw new ServiceException(e);
+    }
+
+    Graphics2D g = (Graphics2D) img.getGraphics();
+    int height = tile.getHeight(),
+        width  = tile.getWidth(),
+        m = img.getWidth(),
+        n = img.getHeight();
+    m = (m%width == 0) ? (m/width) : (m/width + 1);
+    n = (n%height == 0) ? (n/height) : (n/height + 1);
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        g.drawImage(tile, new AffineTransform(1f,0f,0f,1f, i*width, j*height), null);
+      }
+    }
   }
 
   /**
