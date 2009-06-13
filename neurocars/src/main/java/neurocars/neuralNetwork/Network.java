@@ -31,8 +31,8 @@ public class Network implements Serializable {
   private transient InputManager inputManager;
 
   // network
-  public static final int INPUT_SIZE = 2;
-  public static final int OUTPUT_SIZE = 1;
+  public static final int INPUT_SIZE = 5;
+  public static final int OUTPUT_SIZE = 2;
   public transient static final int DEFAULT_HIDDEN_LAYERS_NUMBER = 1;
   private int hiddenLayersNumber;
   private int hiddenLayerSize;

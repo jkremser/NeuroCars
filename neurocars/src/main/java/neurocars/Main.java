@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 
 import neurocars.neuralNetwork.Network;
 import neurocars.neuralNetwork.service.InputManager;
-import neurocars.neuralNetwork.service.InputManagerFunctionlImpl;
 import neurocars.neuralNetwork.service.InputManagerImpl;
 import neurocars.valueobj.NeuralNetworkInput;
 
@@ -89,9 +88,9 @@ public class Main {
         Network network = new Network(thresholdError, outputFile,
             hiddenLayersNumber, hiddenLayerNeurons, learningConstant,
             maxIterations);
-        // InputManager mngr = new InputManagerImpl(inputFile);
+        InputManager mngr = new InputManagerImpl(inputFile);
         // InputManager mngr = new InputManagerXorImpl();
-        InputManager mngr = new InputManagerFunctionlImpl();
+        // InputManager mngr = new InputManagerFunctionlImpl();
         network.setInputManager(mngr);
         network.learn();
       } else if ("race".equals(mode)) {
