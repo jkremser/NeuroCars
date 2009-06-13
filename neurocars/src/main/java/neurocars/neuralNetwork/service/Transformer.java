@@ -13,17 +13,34 @@ import neurocars.valueobj.NeuralNetworkOutput;
  */
 public class Transformer {
 
-  public static double sigmoidal(double value) {
+  public static final double E = 2.72;
 
-    double eToValue = 1 / java.lang.Math.exp(value);
-    return 1 / (eToValue + 1);
+  // TODO: dat e jako nejakou konstantu, nepotrebujeme presne e
+
+  public static double sigmoidal(double value) {
+    if (value < -5) {
+      return 0.0;
+    }
+    if (value > 5) {
+      return 1.0;
+    }
+    // double eToValue = 1 / java.lang.Math.exp(value);
+    double eToValue = java.lang.Math.pow(E, -value);
+    return 1.0 / (eToValue + 1.0);
     // kdo vi, jak je to efektivni.
     // Pokud by treba byla value normovana, byla by lepsi fce expm1
     // jenze to nikdy pravdepodobne kolem nuly vzdy nebude, takze nic
   }
 
   public static double tangens(double value) {
-    return 0;// OPTIONAL
+    if (value < -5) {
+      return -1.0;
+    }
+    if (value > 5) {
+      return 1.0;
+    }
+    double eToValue = java.lang.Math.pow(E, -value);
+    return (1.0 - eToValue) / (1.0 + eToValue);
   }
 
   /**
@@ -58,8 +75,8 @@ public class Transformer {
   public static NeuralNetworkOutput dataItemToNnOutput(DataItem outputDI) {
     NeuralNetworkOutput nnOutput = new NeuralNetworkOutput();
 
-    nnOutput.setSpeed(outputDI.getOutput(0));
-    nnOutput.setTurn(outputDI.getOutput(1));
+    nnOutput.setSpeed(outputDI.getOutput(0) * 2 - 1);
+    nnOutput.setTurn(outputDI.getOutput(1) * 2 - 1);
 
     // plyn
     // if (closerToOne(outputDI.getOutput(0))) {

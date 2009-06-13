@@ -1,10 +1,12 @@
 package neurocars.neuralNetwork;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -14,6 +16,7 @@ import java.util.List;
 import neurocars.neuralNetwork.service.Constants;
 import neurocars.neuralNetwork.service.InputManager;
 import neurocars.neuralNetwork.service.Transformer;
+import neurocars.utils.AppUtils;
 import neurocars.valueobj.NeuralNetworkInput;
 import neurocars.valueobj.NeuralNetworkOutput;
 
@@ -28,8 +31,8 @@ public class Network implements Serializable {
   private transient InputManager inputManager;
 
   // network
-  public static final int INPUT_SIZE = 5;
-  public static final int OUTPUT_SIZE = 2;
+  public static final int INPUT_SIZE = 2;
+  public static final int OUTPUT_SIZE = 1;
   public transient static final int DEFAULT_HIDDEN_LAYERS_NUMBER = 1;
   private int hiddenLayersNumber;
   private int hiddenLayerSize;
@@ -46,10 +49,10 @@ public class Network implements Serializable {
   private transient int iteration;
 
   // ladeni
-  private int iterationStep = 1;
+  private int iterationStep = 20;
 
   // stav site
-  private boolean learningMode;
+  private volatile boolean learningMode;
 
   /**
    * Konstruktor site. Pred samotnym trenovanim je jeste treba zavolat metodu
@@ -133,7 +136,15 @@ public class Network implements Serializable {
         for (int j = 0; j < INPUT_SIZE; j++) {
           InputNode inputNode = inputLayer.getNode(j);
           for (int k = 0; k < hiddenLayerSize; k++) {
+            // if (j == 2) {
+            // inputNode.addNextLayerNode(layer.getNode(k), 2.0); // priorita na
+            // vzdalenost
+            // } else if (j == 3) {
+            // inputNode.addNextLayerNode(layer.getNode(k), 1.0); // priorita na
+            // uhel zatacky
+            // } else {
             inputNode.addNextLayerNode(layer.getNode(k));
+            // }
           }
         }
       } else {// previous layer is hidden
@@ -179,19 +190,42 @@ public class Network implements Serializable {
       InputNode inNode = inputLayer.getNode(i);
       inNode.setInput(item.getInput(i));
       inNode.sendWeightedOutputs();
-      // rozesleme transformovane vstupy vzdy do dalsi vrstvy
-      for (int j = 0; j < hiddenLayersNumber; j++) {
-        hiddenLayers.get(j).sendTransformedOutput();
-      }
-      // vystupni neurony spocitaji svoje vystupy
-      outputLayer.computeOutput();
+      // // rozesleme transformovane vstupy vzdy do dalsi vrstvy
+      // for (int j = 0; j < hiddenLayersNumber; j++) {
+      // hiddenLayers.get(j).sendTransformedOutput();
+      // }
+      // // vystupni neurony spocitaji svoje vystupy
+      // outputLayer.computeOutput();
     }
+    // rozesleme transformovane vstupy vzdy do dalsi vrstvy
+    for (int j = 0; j < hiddenLayersNumber; j++) {
+      hiddenLayers.get(j).sendTransformedOutput();
+    }
+    // vystupni neurony spocitaji svoje vystupy
+    outputLayer.computeOutput();
   }
 
   /**
    * Spusti uceni
    */
   public void learn() {
+    new Thread() {
+
+      public void run() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+            System.in));
+        try {
+          String command = reader.readLine();
+          if ("stop".equals(command)) {
+            learningMode = false;
+          }
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }.start();
+
     // System.out.println("endcondition" + endCondition);
     System.out.println("iteration:" + iteration);
     System.out.println("trainError: " + trainError);
@@ -200,11 +234,11 @@ public class Network implements Serializable {
     }
     inputManager.initTrainData();
     initNetwork();
-    //System.out.println(this);
+    // System.out.println(this);
     DataItem item;
     iteration = 0;
     // System.out.println("endcondition:" + endConditionFulfilled());
-    while (!endConditionFulfilled() || iteration == 0) {
+    while ((!endConditionFulfilled() || iteration == 0) && learningMode) {
       // pred prvni iteraci je totiz trainError 0 < tresholdError a proto
       // i endConditionFulfilled() je true
       if (endCondition == EndConditionType.TRAIN_ERROR) {
@@ -212,7 +246,6 @@ public class Network implements Serializable {
       }
       inputManager.resetTrainData();
       while ((item = inputManager.getNextTrainItem()) != null) {
-        // System.out.println("item: " + item);
         processInput(item);
         if (endCondition == EndConditionType.TRAIN_ERROR) {
           updateTrainError(item);
@@ -224,8 +257,14 @@ public class Network implements Serializable {
       if (iteration % iterationStep == 0 || iteration == 1) {
         System.out.println("iteration:" + iteration);
         System.out.println("trainError: " + trainError);
+        System.out.println(Constants.getLearningConstant(iteration));
       }
+      // if (iteration == 1 || iteration == 1000) {
+      // System.out.println(this);
+      // }
     }
+    System.out.println(this);
+    System.out.println(testNet());
     // inputManager.closeTrainData();
     learningMode = false;
     serializeNetwork();
@@ -277,6 +316,7 @@ public class Network implements Serializable {
   private void serializeNetwork() {
     ObjectOutputStream oos = null;
     try {
+      System.out.println("serialize");
       oos = new ObjectOutputStream(new FileOutputStream(outputFile));
       oos.writeObject(this);
     } catch (FileNotFoundException e) {
@@ -350,7 +390,9 @@ public class Network implements Serializable {
       OutputNode node = outputLayer.getNode(i);
       // System.out.println("real output: " + node.getOutput());
       // System.out.println("expected output: " + item.getOutput(i));
-      error += Math.pow(item.getOutput(i) - node.getOutput(), 2);
+      double aux = item.getOutput(i) - node.getOutput();
+      error += aux * aux;
+      // operace!
       // System.out.println("Single node error:"
       // + Math.pow(item.getOutput(i) - node.getOutput(), 2));
     }
@@ -391,9 +433,9 @@ public class Network implements Serializable {
     }
     DataItem item = Transformer.nnInputToDataItem(input);
     processInput(item);
-    System.out.println("###IN\n\n" + item);
+    System.out.println("\n\n\n" + item);
     DataItem outputDI = getOutput();
-    System.out.println("###OUT\n\n" + outputDI);
+    System.out.println(outputDI);
     return Transformer.dataItemToNnOutput(outputDI);
   }
 
@@ -408,6 +450,67 @@ public class Network implements Serializable {
       output.addOutputValue(outputLayer.getNode(i).getOutput());
     }
     return output;
+  }
+
+  /**
+   * Vrati vystup vystupnich neuronu
+   * 
+   * @return instance DataItem obsahujici jen vystupni data
+   */
+  private DataItem getOutputForTesting() {
+    DataItem output = new DataItem(-1, OUTPUT_SIZE);
+    for (int i = 0; i < OUTPUT_SIZE; i++) {
+      double item = outputLayer.getNode(i).getOutput();
+      if (item < 0.25) {
+        item = 0;
+      } else if (item > 0.75) {
+        item = 1;
+      } else {
+        item = 0.5;
+      }
+      output.addOutputValue(item);
+    }
+    return output;
+  }
+
+  public String testNet() {
+    int passed = 0;
+    int failed = 0;
+    int bothPassed = 0;
+    if (inputManager == null) {
+      throw new IllegalStateException("InputManager not set yet");
+    }
+    inputManager.initTrainData();
+    DataItem item;
+    System.out.println("TESTING..");
+    while ((item = inputManager.getNextTrainItem()) != null) {
+      System.out.println();
+      System.out.println("item: " + item);
+      processInput(item);
+      DataItem result = getOutputForTesting();
+      System.out.println("net real output: " + getOutput()
+          + "  net rounded output:" + result);
+      boolean cond = true;
+      for (int i = 0; i < OUTPUT_SIZE; i++) {
+        if (Math.abs(item.getOutput(i) - result.getOutput(i)) < 0.001) {
+          passed++;
+        } else {
+          cond = false;
+          failed++;
+        }
+      }
+      if (cond) {
+        bothPassed++;
+      }
+    }
+    System.out.println("passed: " + passed);
+    System.out.println("failed: " + failed);
+    double accuracy1 = (double) passed / (passed + failed);
+    double accuracy2 = (double) (bothPassed * OUTPUT_SIZE) / (passed + failed);
+
+    return "ACCURACY1: " + AppUtils.getNumberFormat().format(accuracy1 * 100)
+        + "%\nACCURACY2: " + AppUtils.getNumberFormat().format(accuracy2 * 100)
+        + "%";
   }
 
   public String toString() {
