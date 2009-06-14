@@ -14,11 +14,10 @@ public class NeuroController extends Controller {
 
   private NeuralNetworkInput in;
   private NeuralNetworkOutput out;
+  private double maxSpeed;
   private Network net;
 
   // private double threshold;
-
-  // private static final double PROBABILITY = 0.9;
 
   public NeuroController(Network net) {
     // net.setLearningMode(false);
@@ -28,64 +27,17 @@ public class NeuroController extends Controller {
 
   public void next(Car car) {
     this.in = car.getNeuralNetworkInput();
+    this.maxSpeed = car.getSetup().getMaxForwardSpeed();
 
     this.out = net.runNetwork(in);
   }
 
-  // public boolean accelerate() {
-  // double randValue = new Random().nextDouble();
-  // double difference = out.getSpeed() - threshold;
-  // boolean retValue;
-  // if (out.getSpeed() > threshold) {
-  // retValue = randValue < PROBABILITY + difference;
-  // } else {
-  // retValue = randValue + difference > PROBABILITY;
-  // }
-  // return retValue;
-  // }
-  //
-  // public boolean brake() {
-  // double randValue = new Random().nextDouble();
-  // double difference = -out.getSpeed() - threshold;
-  // boolean retValue;
-  // if (out.getSpeed() < -threshold) {
-  // retValue = randValue < PROBABILITY + difference;
-  // } else {
-  // retValue = randValue + difference > PROBABILITY;
-  // }
-  // return retValue;
-  // }
-  //
-  // public boolean left() {
-  // double randValue = new Random().nextDouble();
-  // double difference = -out.getTurn() - threshold;
-  // boolean retValue;
-  // if (out.getTurn() < -threshold) {
-  // retValue = randValue < PROBABILITY + difference;
-  // } else {
-  // retValue = randValue + difference > PROBABILITY;
-  // }
-  // return retValue;
-  // }
-  //
-  // public boolean right() {
-  // double randValue = new Random().nextDouble();
-  // double difference = out.getTurn() - threshold;
-  // boolean retValue;
-  // if (out.getTurn() > threshold) {
-  // retValue = randValue < PROBABILITY + difference;
-  // } else {
-  // retValue = randValue + difference > PROBABILITY;
-  // }
-  // return retValue;
-  // }
-
   public boolean accelerate() {
-    return out.getSpeed() > in.getSpeed();
+    return out.getSpeed() * maxSpeed > in.getSpeed();
   }
 
   public boolean brake() {
-    return out.getSpeed() < in.getSpeed();
+    return out.getSpeed() * maxSpeed < in.getSpeed();
   }
 
   public boolean left() {
