@@ -3,6 +3,8 @@ package neurocars.utils;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -91,5 +93,18 @@ public class AppUtils {
    */
   public static double getAngle(double a, double b, double c) {
     return Math.acos((a * a + b * b - c * c) / (2 * a * b));
+  }
+
+  public static String doublesToString(Collection<Double> c) {
+    StringBuffer result = new StringBuffer("[");
+    for (Iterator<Double> i = c.iterator(); i.hasNext();) {
+      result.append(getNumberFormat().format(i.next()));
+      if (i.hasNext()) {
+        result.append(", ");
+      }
+    }
+
+    result.append("]");
+    return result.toString();
   }
 }

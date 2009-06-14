@@ -269,7 +269,7 @@ public class Network implements Serializable {
       // }
     }
     System.out.println(this);
-    System.out.println(testNet());
+    testNet();
     // inputManager.closeTrainData();
     learningMode = false;
     serializeNetwork();
@@ -438,7 +438,7 @@ public class Network implements Serializable {
     }
     DataItem item = Transformer.nnInputToDataItem(input);
     processInput(item);
-    System.out.print("\n\n\n" + item);
+    System.out.print(item + " -->");
     DataItem outputDI = getOutput();
     System.out.println(outputDI);
     return Transformer.dataItemToNnOutput(outputDI);
@@ -478,7 +478,7 @@ public class Network implements Serializable {
     return output;
   }
 
-  public String testNet() {
+  public void testNet() {
     int passed = 0;
     int failed = 0;
     int bothPassed = 0;
@@ -514,9 +514,9 @@ public class Network implements Serializable {
     double accuracy1 = (double) passed / (passed + failed);
     double accuracy2 = (double) (bothPassed) / (passed + failed);
 
-    return "ACCURACY1: " + AppUtils.getNumberFormat().format(accuracy1 * 100)
-        + "%\nACCURACY2: " + AppUtils.getNumberFormat().format(accuracy2 * 100)
-        + "%";
+    System.out.println("ACCURACY1: "
+        + AppUtils.getNumberFormat().format(accuracy1 * 100) + "%\nACCURACY2: "
+        + AppUtils.getNumberFormat().format(accuracy2 * 100) + "%");
   }
 
   public String toString() {

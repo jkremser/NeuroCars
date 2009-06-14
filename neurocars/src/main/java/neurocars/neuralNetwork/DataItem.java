@@ -3,6 +3,8 @@ package neurocars.neuralNetwork;
 import java.util.ArrayList;
 import java.util.List;
 
+import neurocars.utils.AppUtils;
+
 /**
  * 
  * @author Martin Obsahuje data jednoho radku ze vstupniho souboru - tj. 1 vstup
@@ -89,7 +91,7 @@ public class DataItem {
   }
 
   public String toString() {
-    return (input == null ? "" : "IN: " + input)
-        + (output == null ? "" : "\nOUT: " + output);
+    return (input == null ? "" : "IN: " + AppUtils.doublesToString(input))
+        + (output == null ? "" : " OUT: " + AppUtils.doublesToString(output));
   }
 }
