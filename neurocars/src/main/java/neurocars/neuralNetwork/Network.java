@@ -51,7 +51,7 @@ public class Network implements Serializable {
   private transient int iteration;
 
   // ladeni
-  private int iterationStep = 20;
+  private int iterationStep = 60;
 
   // stav site
   private volatile boolean learningMode;
@@ -257,9 +257,12 @@ public class Network implements Serializable {
       }
       iteration++;
       if (iteration % iterationStep == 0 || iteration == 1) {
-        System.out.println("iteration:" + iteration);
-        System.out.println("trainError: " + trainError);
-        System.out.println(Constants.getLearningConstant(iteration));
+        System.out.println(iteration
+            + ";"
+            + AppUtils.getNumberFormat().format(trainError)
+            + ";"
+            + AppUtils.getNumberFormat().format(
+                (Constants.getLearningConstant(iteration))));
       }
       // if (iteration == 1 || iteration == 1000) {
       // System.out.println(this);
@@ -435,7 +438,7 @@ public class Network implements Serializable {
     }
     DataItem item = Transformer.nnInputToDataItem(input);
     processInput(item);
-    System.out.println("\n\n\n" + item);
+    System.out.print("\n\n\n" + item);
     DataItem outputDI = getOutput();
     System.out.println(outputDI);
     return Transformer.dataItemToNnOutput(outputDI);
@@ -489,9 +492,10 @@ public class Network implements Serializable {
       System.out.println();
       System.out.println("item: " + item);
       processInput(item);
-      DataItem result = getOutputForTesting();
-      System.out.println("net real output: " + getOutput()
-          + "  net rounded output:" + result);
+      // DataItem result = getOutputForTesting(); // u diskretniho vystupu
+      // 0/0.5/1
+      DataItem result = getOutput();
+      System.out.println("net output: " + getOutput());
       boolean cond = true;
       for (int i = 0; i < OUTPUT_SIZE; i++) {
         if (Math.abs(item.getOutput(i) - result.getOutput(i)) < DOUBLE_PRECISION) {
@@ -505,10 +509,10 @@ public class Network implements Serializable {
         bothPassed++;
       }
     }
-    System.out.println("passed: " + passed);
+    System.out.println("****************************\npassed: " + passed);
     System.out.println("failed: " + failed);
     double accuracy1 = (double) passed / (passed + failed);
-    double accuracy2 = (double) (bothPassed * OUTPUT_SIZE) / (passed + failed);
+    double accuracy2 = (double) (bothPassed) / (passed + failed);
 
     return "ACCURACY1: " + AppUtils.getNumberFormat().format(accuracy1 * 100)
         + "%\nACCURACY2: " + AppUtils.getNumberFormat().format(accuracy2 * 100)
