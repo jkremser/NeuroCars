@@ -263,7 +263,8 @@ public class Car extends Entity {
   public NeuralNetworkInput getNeuralNetworkInput() {
     NeuralNetworkInput d = new NeuralNetworkInput();
 
-    d.setSpeed(speed);
+    // procentualni ... <0,1>
+    d.setSpeed(speed / getSetup().getMaxForwardSpeed());
     d.setSteeringWheel(steeringWheel);
 
     List<WayPoint> wayPoints = game.getTrack().getWayPoints();
