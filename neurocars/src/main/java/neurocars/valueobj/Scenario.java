@@ -113,7 +113,7 @@ public class Scenario {
         // ".threshold");
         File netFile = new File("config/neuralnetwork/" + path);
         Network net = Network.loadNetwork(netFile);
-        NeuroController nc = new NeuroController(net, 0.333); // TODO threshold
+        NeuroController nc = new NeuroController(net);
         c = nc;
       } else {
         throw new ServiceException("unknown value: " + controllerKey + "="

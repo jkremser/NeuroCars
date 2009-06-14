@@ -280,9 +280,6 @@ public class Car extends Entity {
     // normalizuju vzdalenost do intervalu <0,20>, protoze ty vstupy pak
     // jsou pomerne hodne nepomerne (<0,1> X <0,1###>)
     wayPointDistance = ((wayPointDistance / 1000) * 20);
-    if (wayPointDistance < 2.796908) {
-      System.out.print("");
-    }
 
     d.setWayPointAngle(wayPointAngle);
     d.setWayPointDistance(wayPointDistance);

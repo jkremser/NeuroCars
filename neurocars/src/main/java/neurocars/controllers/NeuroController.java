@@ -12,37 +12,24 @@ import neurocars.valueobj.NeuralNetworkOutput;
  */
 public class NeuroController extends Controller {
 
+  private NeuralNetworkInput in;
   private NeuralNetworkOutput out;
   private Network net;
-  private double threshold;
+
+  // private double threshold;
 
   // private static final double PROBABILITY = 0.9;
 
-  public NeuroController(Network net, double threshold) {
+  public NeuroController(Network net) {
     // net.setLearningMode(false);
     this.net = net;
-    this.threshold = threshold;
+    // this.threshold = threshold;
   }
 
   public void next(Car car) {
-    NeuralNetworkInput in = car.getNeuralNetworkInput();
-    // boolean flip = (in.getCurveAngle() < -0.01);
-    // if (flip) { // zaporny uhel zatacky, musime klopit
-    // in.setCurveAngle(-in.getCurveAngle());
-    // in.setWayPointAngle(-in.getWayPointAngle());
-    // in.setSteeringWheel(-in.getSteeringWheel());
-    // }
-    // zatacka hack
-    // if ((in.getCurveAngle() < -0.01 && out.getTurn() > 0.01)
-    // || (in.getCurveAngle() > -0.01 && out.getTurn() < 0.01)) {
-    // out.setTurn(-out.getTurn());
-    // }
+    this.in = car.getNeuralNetworkInput();
 
     this.out = net.runNetwork(in);
-    // if (flip) {
-    // out.setTurn(-out.getTurn());
-    // }
-    System.out.println(out);
   }
 
   // public boolean accelerate() {
@@ -94,19 +81,19 @@ public class NeuroController extends Controller {
   // }
 
   public boolean accelerate() {
-    return out.getSpeed() > threshold;
+    return out.getSpeed() > in.getSpeed();
   }
 
   public boolean brake() {
-    return out.getSpeed() < -threshold;
+    return out.getSpeed() < in.getSpeed();
   }
 
   public boolean left() {
-    return out.getTurn() < -threshold;
+    return out.getTurn() < in.getWayPointAngle();
   }
 
   public boolean right() {
-    return out.getTurn() > threshold;
+    return out.getTurn() > in.getWayPointAngle();
   }
 
 }
