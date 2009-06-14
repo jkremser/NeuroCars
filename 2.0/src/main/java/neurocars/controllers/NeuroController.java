@@ -27,25 +27,26 @@ public class NeuroController extends Controller {
 
   public void next(Car car) {
     this.in = car.getNeuralNetworkInput();
+    // System.out.println(in);
+    System.out.println(out);
     this.maxSpeed = car.getSetup().getMaxForwardSpeed();
-
     this.out = net.runNetwork(in);
   }
 
   public boolean accelerate() {
-    return out.getSpeed() * maxSpeed > in.getSpeed();
+    return out.getSpeed() > 0.33;
   }
 
   public boolean brake() {
-    return out.getSpeed() * maxSpeed < in.getSpeed();
+    return out.getSpeed() < -0.33;
   }
 
   public boolean left() {
-    return out.getTurn() < in.getWayPointAngle();
+    return out.getTurn() < -0.33;
   }
 
   public boolean right() {
-    return out.getTurn() > in.getWayPointAngle();
+    return out.getTurn() > 0.33;
   }
 
 }

@@ -21,7 +21,7 @@ public class Constants {
    * @return
    */
   public static double getLearningConstant(int iteration) {
-    return learningConstant + iteration / 200000.0;
+    return learningConstant + iteration / 150000.0;
   }
 
   public static void setMomentum(double momentum) {

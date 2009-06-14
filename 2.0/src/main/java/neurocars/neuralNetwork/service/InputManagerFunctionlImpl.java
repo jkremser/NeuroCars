@@ -49,15 +49,15 @@ public class InputManagerFunctionlImpl implements InputManager {
     trainCounter = 0;
   }
 
-  private int fce(int a, int b) {
-    return ((a - 1 == b) ? 1 : 0);
+  private double fce(int a, int b) {
+    return ((double) a + b) / 100.0;
   }
 
   private void fillTrainData() {
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 200; i++) {
       Random r = new Random();
-      int a = r.nextInt(20);
-      int b = r.nextInt(20);
+      int a = r.nextInt(50);
+      int b = r.nextInt(50);
       DataItem item = new DataItem(2, 1);
       item.addInputValue(a);
       item.addInputValue(b);

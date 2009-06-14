@@ -195,41 +195,47 @@ public class InputManagerImpl implements InputManager {
         cou++;
         DataItem item = new DataItem(Network.INPUT_SIZE, Network.OUTPUT_SIZE);
         int i = 0;
-        // for (String stringValue : line.split(";")) {
-        // try {
-        // if (i < Network.OUTPUT_SIZE) {
-        // double d = Double.parseDouble(stringValue);
-        // item.addOutputValue((Double.parseDouble(stringValue) + 1.0) / 2.0);
-        // } else {
-        // // if (i == Network.OUTPUT_SIZE + 1) {
-        // // i++;
-        // // continue; // preskoc 2. vstupni atribut (natoceni volantu)
-        // // }
-        // item.addInputValue(Double.parseDouble(stringValue));
-        // }
-        // } catch (NumberFormatException nfe) {
-        // System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na retezci \""
-        // + stringValue + "\" na radku " + cou);
-        // }
-        // i++;
-        // }
-        String stringValues[] = line.split(";");
-        try {
-          item.addInputValue(Double.parseDouble(stringValues[4])); // vzdalenost
-          // od dalsiho
-          // WP
-          item.addInputValue(Double.parseDouble(stringValues[6])); // odchylka
-          // (uhel
-          // zatacky)
-          item.addOutputValue((Double.parseDouble(stringValues[5]) / (2 * Math.PI)) + 0.5);// uhel
-          // do
-          // dalsiho
-          // WP
-          item.addOutputValue(Double.parseDouble(stringValues[2]) / 10.0);// rychlost
-        } catch (NumberFormatException nfe) {
-          System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na radku "
-              + cou);
+        for (String stringValue : line.split(";")) {
+          try {
+            if (i < Network.OUTPUT_SIZE) {
+              double d = Double.parseDouble(stringValue);
+              item.addOutputValue((Double.parseDouble(stringValue) + 1.0) / 2.0);
+            } else {
+              // if ((i == 3) || (i == 6)) {
+              // i++;
+              // continue; // preskoc 2. a 5. vstupni atribut (natoceni
+              // volantu),
+              // // curve angle
+              // }
+              item.addInputValue(Double.parseDouble(stringValue));
+            }
+          } catch (NumberFormatException nfe) {
+            System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na retezci \""
+                + stringValue + "\" na radku " + cou);
+          }
+          i++;
         }
+        // String stringValues[] = line.split(";");
+        // try {
+        // item.addInputValue(Double.parseDouble(stringValues[4])); //
+        // vzdalenost
+        // // od dalsiho
+        // // WP
+        // item.addInputValue((Double.parseDouble(stringValues[6]))); //
+        // odchylka
+        // // (uhel
+        // // zatacky)
+        // item.addOutputValue((Double.parseDouble(stringValues[5]) / (2 *
+        // Math.PI)) + 0.5);// uhel
+        // // do
+        // // dalsiho
+        // // WP
+        // item.addOutputValue(Double.parseDouble(stringValues[2]) / 10.0);//
+        // rychlost
+        // } catch (NumberFormatException nfe) {
+        // System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na radku "
+        // + cou);
+        // }
         data.add(item);
       }
     } catch (IOException e) {
