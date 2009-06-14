@@ -75,7 +75,7 @@ public class Transformer {
   public static NeuralNetworkOutput dataItemToNnOutput(DataItem outputDI) {
     NeuralNetworkOutput nnOutput = new NeuralNetworkOutput();
 
-    nnOutput.setSpeed(outputDI.getOutput(0) * 10);
+    nnOutput.setSpeed(outputDI.getOutput(0));
     nnOutput.setTurn((outputDI.getOutput(1) - 0.5) * 2 * Math.PI);
 
     // plyn
