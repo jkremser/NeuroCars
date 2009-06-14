@@ -76,15 +76,15 @@ public class Main {
         File inputFile = new File(line.getOptionValue("input"));
         File outputFile = new File(line.getOptionValue("network"));
         double thresholdError = Double.valueOf(line.getOptionValue("threshold",
-            "0.1"));
+            "0.001"));
         int hiddenLayersNumber = Integer.valueOf(line.getOptionValue("layers",
             "1"));
         int hiddenLayerNeurons = Integer.valueOf(line.getOptionValue("neurons",
-            "10"));
+            "8"));
         double learningConstant = Double.valueOf(line.getOptionValue(
-            "learningconstant", "0.001"));
+            "learningconstant", "0.01"));
         int maxIterations = Integer.valueOf(line.getOptionValue("iterations",
-            "30000"));
+            "10000"));
         Network network = new Network(thresholdError, outputFile,
             hiddenLayersNumber, hiddenLayerNeurons, learningConstant,
             maxIterations);
