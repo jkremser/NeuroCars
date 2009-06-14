@@ -18,10 +18,10 @@ public class Transformer {
   // TODO: dat e jako nejakou konstantu, nepotrebujeme presne e
 
   public static double sigmoidal(double value) {
-    if (value < -5) {
+    if (value < -8) {
       return 0.0;
     }
-    if (value > 5) {
+    if (value > 8) {
       return 1.0;
     }
     // double eToValue = 1 / java.lang.Math.exp(value);
@@ -33,10 +33,10 @@ public class Transformer {
   }
 
   public static double tangens(double value) {
-    if (value < -5) {
+    if (value < -8) {
       return -1.0;
     }
-    if (value > 5) {
+    if (value > 8) {
       return 1.0;
     }
     double eToValue = java.lang.Math.pow(E, -value);

@@ -195,40 +195,41 @@ public class InputManagerImpl implements InputManager {
         cou++;
         DataItem item = new DataItem(Network.INPUT_SIZE, Network.OUTPUT_SIZE);
         int i = 0;
-        for (String stringValue : line.split(";")) {
-          try {
-            if (i < Network.OUTPUT_SIZE) {
-              double d = Double.parseDouble(stringValue);
-              item.addOutputValue((Double.parseDouble(stringValue) + 1.0) / 2.0);
-            } else {
-              // if (i == Network.OUTPUT_SIZE + 1) {
-              // i++;
-              // continue; // preskoc 2. vstupni atribut (natoceni volantu)
-              // }
-              item.addInputValue(Double.parseDouble(stringValue));
-            }
-          } catch (NumberFormatException nfe) {
-            System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na retezci \""
-                + stringValue + "\" na radku " + cou);
-          }
-          i++;
+        // for (String stringValue : line.split(";")) {
+        // try {
+        // if (i < Network.OUTPUT_SIZE) {
+        // double d = Double.parseDouble(stringValue);
+        // item.addOutputValue((Double.parseDouble(stringValue) + 1.0) / 2.0);
+        // } else {
+        // // if (i == Network.OUTPUT_SIZE + 1) {
+        // // i++;
+        // // continue; // preskoc 2. vstupni atribut (natoceni volantu)
+        // // }
+        // item.addInputValue(Double.parseDouble(stringValue));
+        // }
+        // } catch (NumberFormatException nfe) {
+        // System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na retezci \""
+        // + stringValue + "\" na radku " + cou);
+        // }
+        // i++;
+        // }
+        String stringValues[] = line.split(";");
+        try {
+          item.addInputValue(Double.parseDouble(stringValues[4])); // vzdalenost
+                                                                   // od dalsiho
+                                                                   // WP
+          item.addInputValue((Double.parseDouble(stringValues[5]) / (2 * Math.PI)) + 0.5); // uhel
+                                                                                           // do
+                                                                                           // dalsiho
+                                                                                           // WP
+          item.addOutputValue((Double.parseDouble(stringValues[6]) / (2 * Math.PI)) + 0.5);// odchylka
+                                                                                           // (uhel
+                                                                                           // zatacky)
+          item.addOutputValue(Double.parseDouble(stringValues[2]) / 10.0);// rychlost
+        } catch (NumberFormatException nfe) {
+          System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na radku "
+              + cou);
         }
-        /*
-         * if (item.getInput(4) < 0) { // uhle zatacky je zaporny DataItem
-         * newItem = new DataItem(Network.INPUT_SIZE,Network.OUTPUT_SIZE);
-         * for(int j=0; j<Network.INPUT_SIZE; j++){
-         * newItem.addInputValue(item.getInput(j)); } for(int j=0;
-         * j<Network.OUTPUT_SIZE; j++){
-         * newItem.addOutputValue(item.getOutput(j)); } newItem.setInput(1,
-         * -item.getInput(1)); // prevraceni znamenka // u otoceni // volantu
-         * newItem.setInput(3, -item.getInput(3)); // prevraceni znamenka // u
-         * uhlu k // nasledujicimu bodu
-         * 
-         * double direction = item.getOutput(1); double newDirection = 0; if
-         * (direction == -1) { newDirection = 1; } else if (direction == 1) {
-         * newDirection = -1; } newItem.setOutput(1, newDirection);// prohodi
-         * doleva a // doprava data.add(newItem); }
-         */
         data.add(item);
       }
     } catch (IOException e) {

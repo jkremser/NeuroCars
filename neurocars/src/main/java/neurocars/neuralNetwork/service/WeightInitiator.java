@@ -8,10 +8,10 @@ public class WeightInitiator {
 
   /**
    * 
-   * @return hodnota (-0.5;0.5>
+   * @return hodnota (-0.05;0.05>
    */
   public Double getWeight() {
-    return Double.valueOf((generator.nextDouble()) - 0.5);
+    return Double.valueOf((generator.nextDouble()) / 10.0 - 0.05);
   }
 
 }

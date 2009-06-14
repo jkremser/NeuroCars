@@ -26,12 +26,14 @@ public class Network implements Serializable {
    * 
    */
   private static final long serialVersionUID = 8306840890842813850L;
+  private static final double DOUBLE_PRECISION = 0.05D;
+
   // data
   private File outputFile; // tam se serializuje naucena sit
   private transient InputManager inputManager;
 
   // network
-  public static final int INPUT_SIZE = 5;
+  public static final int INPUT_SIZE = 2;
   public static final int OUTPUT_SIZE = 2;
   public transient static final int DEFAULT_HIDDEN_LAYERS_NUMBER = 1;
   private int hiddenLayersNumber;
@@ -492,7 +494,7 @@ public class Network implements Serializable {
           + "  net rounded output:" + result);
       boolean cond = true;
       for (int i = 0; i < OUTPUT_SIZE; i++) {
-        if (Math.abs(item.getOutput(i) - result.getOutput(i)) < 0.001) {
+        if (Math.abs(item.getOutput(i) - result.getOutput(i)) < DOUBLE_PRECISION) {
           passed++;
         } else {
           cond = false;
