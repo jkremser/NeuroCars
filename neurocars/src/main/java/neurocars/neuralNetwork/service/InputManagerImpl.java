@@ -216,15 +216,15 @@ public class InputManagerImpl implements InputManager {
         String stringValues[] = line.split(";");
         try {
           item.addInputValue(Double.parseDouble(stringValues[4])); // vzdalenost
-                                                                   // od dalsiho
-                                                                   // WP
-          item.addInputValue((Double.parseDouble(stringValues[5]) / (2 * Math.PI)) + 0.5); // uhel
-                                                                                           // do
-                                                                                           // dalsiho
-                                                                                           // WP
-          item.addOutputValue((Double.parseDouble(stringValues[6]) / (2 * Math.PI)) + 0.5);// odchylka
-                                                                                           // (uhel
-                                                                                           // zatacky)
+          // od dalsiho
+          // WP
+          item.addInputValue(Double.parseDouble(stringValues[6])); // odchylka
+          // (uhel
+          // zatacky)
+          item.addOutputValue((Double.parseDouble(stringValues[5]) / (2 * Math.PI)) + 0.5);// uhel
+          // do
+          // dalsiho
+          // WP
           item.addOutputValue(Double.parseDouble(stringValues[2]) / 10.0);// rychlost
         } catch (NumberFormatException nfe) {
           System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na radku "

@@ -52,10 +52,10 @@ public class Transformer {
    */
   public static DataItem nnInputToDataItem(NeuralNetworkInput input) {
     DataItem item = new DataItem(Network.INPUT_SIZE);
-    item.addInputValue(input.getSpeed());
-    item.addInputValue(input.getSteeringWheel());
+    // item.addInputValue(input.getSpeed());
+    // item.addInputValue(input.getSteeringWheel());
     item.addInputValue(input.getWayPointDistance());
-    item.addInputValue(input.getWayPointAngle());
+    // item.addInputValue(input.getWayPointAngle());
     item.addInputValue(input.getCurveAngle());
     // velikost nasledujiciho bodu. Ma to tam byt, nebo ne???
     return item;
@@ -75,8 +75,8 @@ public class Transformer {
   public static NeuralNetworkOutput dataItemToNnOutput(DataItem outputDI) {
     NeuralNetworkOutput nnOutput = new NeuralNetworkOutput();
 
-    nnOutput.setSpeed(outputDI.getOutput(0) * 2 - 1);
-    nnOutput.setTurn(outputDI.getOutput(1) * 2 - 1);
+    nnOutput.setSpeed(outputDI.getOutput(0) * 10);
+    nnOutput.setTurn((outputDI.getOutput(1) - 0.5) * 2 * Math.PI);
 
     // plyn
     // if (closerToOne(outputDI.getOutput(0))) {
