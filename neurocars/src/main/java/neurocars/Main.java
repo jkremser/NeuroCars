@@ -108,7 +108,7 @@ public class Main {
         Network network = Network.loadNetwork(net);
         InputManager mngr = new InputManagerImpl(input);
         network.setInputManager(mngr);
-        System.out.println(network.testNet());
+        network.testNet();
       } else if ("interactive".equals(mode)) {
         requiredParameter(line, "network", options);
         File net = new File(line.getOptionValue("network"));
