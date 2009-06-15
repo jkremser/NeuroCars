@@ -15,8 +15,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import neurocars.gui.renderer.ICarRenderer;
 import neurocars.gui.sprites.CarSprite;
 import neurocars.gui.sprites.ISprite;
 import neurocars.utils.ServiceException;
+import neurocars.utils.GraphicUtils;
 import neurocars.valueobj.Track;
 import neurocars.valueobj.WayPoint;
 
@@ -71,9 +73,6 @@ public class Java2DGUI implements IGUI {
 
   // mapa reprezentujici stisknute klavesy na klavesnici
   private final boolean[] keyboard = new boolean[65535];
-
-  private final Color[] playerColors = new Color[] { Color.WHITE, Color.BLUE,
-      Color.GREEN, Color.YELLOW, Color.RED, Color.MAGENTA, Color.ORANGE };
 
   // pozadi hraci plochy
   private BufferedImage background;
@@ -162,22 +161,36 @@ public class Java2DGUI implements IGUI {
         KeyboardController kc = (KeyboardController) c.getController();
         kc.setKeyboard(keyboard);
       }
-      sprites.add(new CarSprite(c, renderer, playerColors[color++]));
+      if (color+1 < GraphicUtils.palette.length)
+        color++;
+      sprites.add(new CarSprite(c, renderer, color));
     }
   }
 
   /*
    * (non-Javadoc)
    * 
-   * @see neurocars.gui.IGUI#refresh()
+   * @see neurocars.gui.IGUI#startScene()
    */
-  public void refresh() {
+  public void startScene() {
     Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+    // TODO: reuse drawable?
 
     // napred vymazeme pozadi
     for (ISprite cs : sprites) {
       cs.erase(g, background);
     }
+
+    g.dispose();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see neurocars.gui.IGUI#finishScene()
+   */
+  public void finishScene() {
+    Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 
     // potom vykreslime auticka ...
     for (ISprite cs : sprites) {
@@ -343,13 +356,26 @@ public class Java2DGUI implements IGUI {
       dirR.setLocation(dirR.getX()/lenR, dirR.getY()/lenR);
 
       // Okraj cesty
-      glborder.setColor(Color.WHITE);
+      //glborder.setColor(Color.WHITE);
+      glborder.setColor(new Color(0.45f, 0.45f, 0.45f));
+      glborder.draw(new Line2D.Double(
+          ptp.getX() - dir.getY()*ptp.getSize()/2,
+          ptp.getY() + dir.getX()*ptp.getSize()/2,
+          pt.getX() - dir.getY()*pt.getSize()/2,
+          pt.getY() + dir.getX()*pt.getSize()/2));
+      glborder.draw(new Line2D.Double(
+          ptp.getX() + dir.getY()*ptp.getSize()/2,
+          ptp.getY() - dir.getX()*ptp.getSize()/2,
+          pt.getX() + dir.getY()*pt.getSize()/2,
+          pt.getY() - dir.getX()*pt.getSize()/2));
 
       rest = lenL; // (melo by lenL == lenR)
       while (rest > 0) {
         double size = (rest < FlankWidth) ? rest : FlankWidth;
 
-        glborder.setColor(Color.WHITE);
+        /*
+        //glborder.setColor(Color.WHITE);
+        glborder.setColor(new Color(0.45f, 0.45f, 0.45f));
         glborder.fillPolygon(
             new int[] {
               (int)(flnkptL.getX() + dir.getY()*FlankHeight/2),
@@ -365,7 +391,8 @@ public class Java2DGUI implements IGUI {
             },
             4);
 
-        glborder.setColor(Color.CYAN);
+        //glborder.setColor(Color.CYAN);
+        glborder.setColor(new Color(0.45f, 0.45f, 0.45f));
         glborder.fillPolygon(
             new int[] {
               (int)(flnkptR.getX() + dir.getY()*FlankHeight/2),
@@ -380,6 +407,7 @@ public class Java2DGUI implements IGUI {
               (int)(flnkptR.getY() + dir.getX()*FlankHeight/2),
             },
             4);
+            */
 
         rest -= 1.5*FlankWidth;
         flnkptL.setLocation(

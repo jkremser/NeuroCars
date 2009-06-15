@@ -12,7 +12,10 @@ public class NoGUI implements IGUI {
     System.out.println("Running without GUI...");
   }
 
-  public void refresh() {
+  public void startScene() {
+  }
+
+  public void finishScene() {
   }
 
   public int getCycleDelay() {
