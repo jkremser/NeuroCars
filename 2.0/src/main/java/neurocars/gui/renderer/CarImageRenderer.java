@@ -19,7 +19,7 @@ import neurocars.utils.ServiceException;
  */
 public class CarImageRenderer implements ICarRenderer {
 
-  private static BufferedImage[] images = new BufferedImage[72];
+  private BufferedImage[] images = new BufferedImage[72];
 
   public CarImageRenderer(String image) throws ServiceException {
     try {
