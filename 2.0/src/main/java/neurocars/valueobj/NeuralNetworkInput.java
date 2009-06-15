@@ -35,7 +35,7 @@ public class NeuralNetworkInput {
     // sb.append(df.format(steeringWheel) + ";");
     sb.append(df.format(wayPointDistance) + ";");
     sb.append(df.format(wayPointAngle) + ";");
-    // sb.append(df.format(curveAngle) + ";");
+    sb.append(df.format(curveAngle) + ";");
 
     return sb.toString();
   }
