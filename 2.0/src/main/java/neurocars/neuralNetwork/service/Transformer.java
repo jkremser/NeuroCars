@@ -61,6 +61,32 @@ public class Transformer {
     return item;
   }
 
+  public static double normalize(double input) {
+    return (input + 1.0) / 2.0;
+  }
+
+  public static double denormalize(double input) {
+    return (input - 0.5) * 2;
+  }
+
+  public static DataItem flip(DataItem input) {
+    input.setOutput(1, input.getOutput(1)); // BACHA je to tu napevno ty indexy
+    input.setInput(2, -input.getInput(2));
+    input.setInput(3, -input.getInput(3));
+    return input;
+  }
+
+  public static NeuralNetworkInput flip(NeuralNetworkInput input) {
+    input.setCurveAngle(-input.getCurveAngle());
+    input.setWayPointAngle(-input.getWayPointAngle());
+    return input;
+  }
+
+  public static NeuralNetworkOutput flip(NeuralNetworkOutput output) {
+    output.setTurn(-output.getTurn());
+    return output;
+  }
+
   /**
    * Prevod DataItem obsahujici jen vystup na NeuralNetworkOutput Pozor, takhle
    * muze vyjit brzda i plyn soucasne TODO: plyn-brzda pripadne doprava-doleva
@@ -75,8 +101,8 @@ public class Transformer {
   public static NeuralNetworkOutput dataItemToNnOutput(DataItem outputDI) {
     NeuralNetworkOutput nnOutput = new NeuralNetworkOutput();
 
-    nnOutput.setSpeed((outputDI.getOutput(0) - 0.5) * 2);
-    nnOutput.setTurn((outputDI.getOutput(1) - 0.5) * 2);
+    nnOutput.setSpeed(denormalize(outputDI.getOutput(0)));
+    nnOutput.setTurn(denormalize(outputDI.getOutput(1)));
     // plyn
     // if (closerToOne(outputDI.getOutput(0))) {
     // nnOutput.setAccelerate(true);

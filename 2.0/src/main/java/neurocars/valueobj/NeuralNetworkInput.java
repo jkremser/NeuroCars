@@ -32,7 +32,7 @@ public class NeuralNetworkInput {
   public String toString() {
     StringBuffer sb = new StringBuffer();
     sb.append(df.format(speed) + ";");
-    // sb.append(df.format(steeringWheel) + ";");
+    sb.append(df.format(steeringWheel) + ";");
     sb.append(df.format(wayPointDistance) + ";");
     sb.append(df.format(wayPointAngle) + ";");
     sb.append(df.format(curveAngle) + ";");

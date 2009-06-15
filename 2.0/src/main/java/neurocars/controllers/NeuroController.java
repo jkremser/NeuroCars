@@ -2,6 +2,7 @@ package neurocars.controllers;
 
 import neurocars.entities.Car;
 import neurocars.neuralNetwork.Network;
+import neurocars.neuralNetwork.service.Transformer;
 import neurocars.valueobj.NeuralNetworkInput;
 import neurocars.valueobj.NeuralNetworkOutput;
 
@@ -26,10 +27,10 @@ public class NeuroController extends Controller {
 
   public void next(Car car) {
     this.in = car.getNeuralNetworkInput();
-    // System.out.println(in);
+    boolean flip = in.getCurveAngle() < 0;
     System.out.println(out);
-    // this.maxSpeed = car.getSetup().getMaxForwardSpeed();
-    this.out = net.runNetwork(in);
+    this.out = net.runNetwork(flip ? Transformer.flip(in) : in); // pretoc input
+    this.out = (flip ? Transformer.flip(this.out) : this.out); // pretoc output
   }
 
   public boolean accelerate() {

@@ -22,6 +22,13 @@ public class InputManagerImpl implements InputManager {
   private List<DataItem> trainData = null;
   private int trainItemCounter = -1;
   private int testItemCounter = -1;
+  public static final int UP_DOWN_KEY = 0;
+  public static final int LEFT_RIGHT_KEY = 1;
+  public static final int SPEED = 2;
+  public static final int STEERING_WHEEL = 3;
+  public static final int WAYPOINT_DISTANCE = 4;
+  public static final int WAYPOINT_ANGLE = 5;
+  public static final int CURVE_ANGLE = 6;
 
   /**
    * Vytvori managera a inicializuje testovaci a trenovaci data
@@ -195,26 +202,26 @@ public class InputManagerImpl implements InputManager {
         cou++;
         DataItem item = new DataItem(Network.INPUT_SIZE, Network.OUTPUT_SIZE);
         int i = 0;
-        for (String stringValue : line.split(";")) {
-          try {
-            if (i < Network.OUTPUT_SIZE) {
-              double d = Double.parseDouble(stringValue);
-              item.addOutputValue((Double.parseDouble(stringValue) + 1.0) / 2.0);
-            } else {
-              // if ((i == 3) || (i == 6)) {
-              // i++;
-              // continue; // preskoc 2. a 5. vstupni atribut (natoceni
-              // volantu),
-              // // curve angle
-              // }
-              item.addInputValue(Double.parseDouble(stringValue));
-            }
-          } catch (NumberFormatException nfe) {
-            System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na retezci \""
-                + stringValue + "\" na radku " + cou);
+        String stringValues[] = line.split(";");
+        try {
+          // WANTED OUTPUT
+          item.addOutputValue(Transformer.normalize(Double.parseDouble(stringValues[UP_DOWN_KEY])));
+          item.addOutputValue(Transformer.normalize(Double.parseDouble(stringValues[LEFT_RIGHT_KEY])));
+          // INPUT
+          double curveAngle = Double.parseDouble(stringValues[CURVE_ANGLE]);
+          item.addInputValue(Double.parseDouble(stringValues[SPEED]));
+          // item.addOutputValue(Double.parseDouble(stringValues[STEERING_WHEEL]));
+          item.addInputValue(Double.parseDouble(stringValues[WAYPOINT_DISTANCE]));
+          item.addInputValue(Double.parseDouble(stringValues[WAYPOINT_ANGLE]));
+          item.addInputValue(curveAngle);
+          if (curveAngle < 0) {
+            item = Transformer.flip(item);
           }
-          i++;
+        } catch (NumberFormatException nfe) {
+          System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na radku "
+              + cou);
         }
+
         // String stringValues[] = line.split(";");
         // try {
         // item.addInputValue(Double.parseDouble(stringValues[4])); //
