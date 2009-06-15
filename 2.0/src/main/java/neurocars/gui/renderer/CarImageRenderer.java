@@ -20,6 +20,8 @@ import neurocars.utils.ServiceException;
  */
 public class CarImageRenderer implements ICarRenderer {
 
+  // private static final Logger log = Logger.getLogger(CarImageRenderer.class);
+
   private static BufferedImage[][] images = new BufferedImage[GraphicUtils.palette.length][72];
 
   public CarImageRenderer() throws ServiceException {
@@ -42,6 +44,12 @@ public class CarImageRenderer implements ICarRenderer {
           rcar = car;
           rmask = mask;
         }
+        //
+        // if (rcar.getWidth() != car.getWidth()
+        // || rcar.getHeight() != car.getHeight()) {
+        // log.warn("rotated image width/height mismatch: " + rcar.getWidth()
+        // + "/" + rcar.getHeight());
+        // }
 
         int w = rcar.getWidth(), h = rcar.getHeight();
         if ((rmask.getWidth() != w) || (rmask.getHeight() != h)) {
@@ -97,8 +105,8 @@ public class CarImageRenderer implements ICarRenderer {
 
     BufferedImage image = images[color][angle];
 
-    g.drawImage(image, (int) (car.getX() - image.getWidth() / 2),
-        (int) (car.getY() - image.getHeight() / 2), null);
+    g.drawImage(image, (int) (car.getX() - images[color][0].getWidth() / 2),
+        (int) (car.getY() - images[color][0].getHeight() / 2), null);
   }
 
   public void erase(Graphics2D g, Car car, BufferedImage background) {
