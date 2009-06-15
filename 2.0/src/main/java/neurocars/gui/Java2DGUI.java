@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 import neurocars.Game;
 import neurocars.controllers.KeyboardController;
 import neurocars.entities.Car;
-import neurocars.gui.renderer.CarCircleRenderer;
+import neurocars.gui.renderer.CarImageRenderer;
 import neurocars.gui.renderer.ICarRenderer;
 import neurocars.gui.sprites.CarSprite;
 import neurocars.gui.sprites.ISprite;
@@ -153,9 +153,8 @@ public class Java2DGUI implements IGUI {
     // carSprites
     int color = 0;
     for (Car c : game.getCars()) {
-      // ICarRenderer renderer = new CarImageRenderer("car_" + (++color) +
-      // ".png");
-      ICarRenderer renderer = new CarCircleRenderer(playerColors[color++]);
+      ICarRenderer renderer = new CarImageRenderer("car_" + (++color) + ".png");
+      // ICarRenderer renderer = new CarCircleRenderer(playerColors[color++]);
       if (c.getController() instanceof KeyboardController) {
         KeyboardController kc = (KeyboardController) c.getController();
         kc.setKeyboard(keyboard);
