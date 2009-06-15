@@ -32,6 +32,13 @@ public class ReplayController extends Controller {
     }
   }
 
+  private void reset() {
+    accelerate = false;
+    brake = false;
+    left = false;
+    right = false;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -39,6 +46,10 @@ public class ReplayController extends Controller {
    */
   public void next(Car car) throws ServiceException {
     try {
+      if (car.isFinished()) {
+        reset();
+        return;
+      }
       if (!replay.ready()) {
         return;
       }
@@ -49,10 +60,7 @@ public class ReplayController extends Controller {
         left = "-1".equals(tokens[1]);
         right = "1".equals(tokens[1]);
       } else {
-        accelerate = false;
-        brake = false;
-        left = false;
-        right = false;
+        reset();
         replay.close();
       }
     } catch (IOException e) {
