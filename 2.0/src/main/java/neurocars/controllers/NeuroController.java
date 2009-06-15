@@ -14,39 +14,38 @@ public class NeuroController extends Controller {
 
   private NeuralNetworkInput in;
   private NeuralNetworkOutput out;
-  private double maxSpeed;
+  // private double maxSpeed;
   private Network net;
+  private double threshold;
 
-  // private double threshold;
-
-  public NeuroController(Network net) {
+  public NeuroController(Network net, double threshold) {
     // net.setLearningMode(false);
     this.net = net;
-    // this.threshold = threshold;
+    this.threshold = threshold;
   }
 
   public void next(Car car) {
     this.in = car.getNeuralNetworkInput();
     // System.out.println(in);
     System.out.println(out);
-    this.maxSpeed = car.getSetup().getMaxForwardSpeed();
+    // this.maxSpeed = car.getSetup().getMaxForwardSpeed();
     this.out = net.runNetwork(in);
   }
 
   public boolean accelerate() {
-    return out.getSpeed() > 0.33;
+    return out.getSpeed() > threshold;
   }
 
   public boolean brake() {
-    return out.getSpeed() < -0.33;
+    return out.getSpeed() < -threshold;
   }
 
   public boolean left() {
-    return out.getTurn() < -0.33;
+    return out.getTurn() < -threshold;
   }
 
   public boolean right() {
-    return out.getTurn() > 0.33;
+    return out.getTurn() > threshold;
   }
 
 }

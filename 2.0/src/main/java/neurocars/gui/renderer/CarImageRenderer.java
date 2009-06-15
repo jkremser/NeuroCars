@@ -1,6 +1,5 @@
 package neurocars.gui.renderer;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -22,10 +21,10 @@ public class CarImageRenderer implements ICarRenderer {
 
   private static BufferedImage[] images = new BufferedImage[72];
 
-  public CarImageRenderer() throws ServiceException {
+  public CarImageRenderer(String image) throws ServiceException {
     try {
       InputStream is = this.getClass().getClassLoader().getResourceAsStream(
-          "car2_small.png");
+          image);
       BufferedImage car = ImageIO.read(is);
       images[0] = car;
       for (int a = 1; a < 72; a++) {
@@ -46,7 +45,7 @@ public class CarImageRenderer implements ICarRenderer {
    * @see neurocars.gui.renderer.ICarRenderer#draw(java.awt.Graphics,
    * neurocars.entities.Car, java.awt.Color)
    */
-  public void draw(Graphics g, Car car, Color color) {
+  public void draw(Graphics g, Car car) {
     int angle = (int) Math.toDegrees(car.getAngle()) / 5;
     BufferedImage image = images[angle];
 

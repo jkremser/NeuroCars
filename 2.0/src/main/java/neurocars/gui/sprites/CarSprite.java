@@ -1,6 +1,5 @@
 package neurocars.gui.sprites;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -17,12 +16,10 @@ public class CarSprite implements ISprite {
 
   private final Car car;
   private final ICarRenderer renderer;
-  private final Color color;
 
-  public CarSprite(Car v, ICarRenderer renderer, Color color) {
+  public CarSprite(Car v, ICarRenderer renderer) {
     this.car = v;
     this.renderer = renderer;
-    this.color = color;
   }
 
   public Car getCar() {
@@ -30,7 +27,7 @@ public class CarSprite implements ISprite {
   }
 
   public void draw(Graphics g) {
-    renderer.draw(g, car, color);
+    renderer.draw(g, car);
   }
 
   public void erase(Graphics g, BufferedImage background) {

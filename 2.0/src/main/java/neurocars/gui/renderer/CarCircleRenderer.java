@@ -9,7 +9,13 @@ import neurocars.valueobj.WayPoint;
 
 public class CarCircleRenderer implements ICarRenderer {
 
-  public void draw(Graphics g, Car car, Color color) {
+  private final Color color;
+
+  public CarCircleRenderer(Color color) {
+    this.color = color;
+  }
+
+  public void draw(Graphics g, Car car) {
     g.setColor(color);
     int x = (int) car.getX();
     int y = (int) car.getY();

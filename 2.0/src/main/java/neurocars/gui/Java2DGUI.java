@@ -15,8 +15,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
@@ -29,7 +29,6 @@ import neurocars.Game;
 import neurocars.controllers.KeyboardController;
 import neurocars.entities.Car;
 import neurocars.gui.renderer.CarCircleRenderer;
-import neurocars.gui.renderer.CarImageRenderer;
 import neurocars.gui.renderer.ICarRenderer;
 import neurocars.gui.sprites.CarSprite;
 import neurocars.gui.sprites.ISprite;
@@ -59,11 +58,9 @@ public class Java2DGUI implements IGUI {
   private static final String TITLE = "ne_uroc/ars";
 
   // Velikost okrajoveho pasu a stredovych sipek
-  private static final int FlankWidth = 30,
-          FlankHeight = 3,
-          ArrowSize = 30;
+  private static final int FlankWidth = 30, FlankHeight = 3, ArrowSize = 30;
   // zkoseni sipky (uhel v radianech)
-  private static final double ArrowSkew = Math.PI/4;
+  private static final double ArrowSkew = Math.PI / 4;
 
   private boolean waitingForKeyPress = false;
   private BufferStrategy strategy;
@@ -134,8 +131,8 @@ public class Java2DGUI implements IGUI {
     // to manage our accelerated graphics
     canvas.createBufferStrategy(2);
     strategy = canvas.getBufferStrategy();
-    System.out.println("Page-flipping strategy: " +
-            strategy.getCapabilities().isPageFlipping());
+    System.out.println("Page-flipping strategy: "
+        + strategy.getCapabilities().isPageFlipping());
 
     frame.setVisible(true);
   }
@@ -153,16 +150,17 @@ public class Java2DGUI implements IGUI {
     g.drawImage(background, 0, 0, null);
     g.dispose();
 
-    ICarRenderer renderer = new CarImageRenderer();
-
     // carSprites
     int color = 0;
     for (Car c : game.getCars()) {
+      // ICarRenderer renderer = new CarImageRenderer("car_" + (++color) +
+      // ".png");
+      ICarRenderer renderer = new CarCircleRenderer(playerColors[color++]);
       if (c.getController() instanceof KeyboardController) {
         KeyboardController kc = (KeyboardController) c.getController();
         kc.setKeyboard(keyboard);
       }
-      sprites.add(new CarSprite(c, renderer, playerColors[color++]));
+      sprites.add(new CarSprite(c, renderer));
     }
   }
 
@@ -203,10 +201,10 @@ public class Java2DGUI implements IGUI {
   private BufferedImage drawBackground(Track track) throws ServiceException {
     //
     // Vrstvy:
-    //   - kruhy
-    //   - stredove sipky
-    //   - okraj cesty
-    //   - cesta
+    // - kruhy
+    // - stredove sipky
+    // - okraj cesty
+    // - cesta
 
     BufferedImage background = gc.createCompatibleImage(game.getXScreenSize(),
         game.getYScreenSize(), Transparency.OPAQUE);
@@ -241,33 +239,28 @@ public class Java2DGUI implements IGUI {
 
     for (int p = 0; p < track.getWayPoints().size(); p++) {
       WayPoint pt = track.getWayPoints().get(p);
-      WayPoint ptp = track.getWayPoints()
-        .get((p+1) % track.getWayPoints().size());
+      WayPoint ptp = track.getWayPoints().get(
+          (p + 1) % track.getWayPoints().size());
 
       Ellipse2D.Double circle = new Ellipse2D.Double(
           (int) (pt.getX() - pt.getSize() / 2),
-          (int) (pt.getY() - pt.getSize() / 2),
-          pt.getSize(), pt.getSize());
+          (int) (pt.getY() - pt.getSize() / 2), pt.getSize(), pt.getSize());
 
-      Point2D.Double dir = new Point2D.Double(
-          ptp.getX() - pt.getX(),
+      Point2D.Double dir = new Point2D.Double(ptp.getX() - pt.getX(),
           ptp.getY() - pt.getY());
-      double len = dir.distance(0,0);
-      dir.setLocation(dir.getX()/len, dir.getY()/len);
+      double len = dir.distance(0, 0);
+      dir.setLocation(dir.getX() / len, dir.getY() / len);
 
       // Cesta
       int[] xRoad = new int[] {
-          (int)(pt.getX() - dir.getY()*pt.getSize()/2),
-          (int)(pt.getX() + dir.getY()*pt.getSize()/2),
-          (int)(ptp.getX() + dir.getY()*ptp.getSize()/2),
-          (int)(ptp.getX() - dir.getY()*ptp.getSize()/2)
-        },
-        yRoad = new int[] {
-          (int)(pt.getY() + dir.getX()*pt.getSize()/2),
-          (int)(pt.getY() - dir.getX()*pt.getSize()/2),
-          (int)(ptp.getY() - dir.getX()*ptp.getSize()/2),
-          (int)(ptp.getY() + dir.getX()*ptp.getSize()/2)
-        };
+          (int) (pt.getX() - dir.getY() * pt.getSize() / 2),
+          (int) (pt.getX() + dir.getY() * pt.getSize() / 2),
+          (int) (ptp.getX() + dir.getY() * ptp.getSize() / 2),
+          (int) (ptp.getX() - dir.getY() * ptp.getSize() / 2) }, yRoad = new int[] {
+          (int) (pt.getY() + dir.getX() * pt.getSize() / 2),
+          (int) (pt.getY() - dir.getX() * pt.getSize() / 2),
+          (int) (ptp.getY() - dir.getX() * ptp.getSize() / 2),
+          (int) (ptp.getY() + dir.getX() * ptp.getSize() / 2) };
 
       glroad.setColor(Color.GRAY);
       glroad.fillPolygon(xRoad, yRoad, xRoad.length);
@@ -283,64 +276,66 @@ public class Java2DGUI implements IGUI {
       // Stredove sipky
       glarrows.setColor(Color.YELLOW);
       double rest = len;
-      //rest -= pt.getSize()/2 + ptp.getSize()/2;
-      Point2D.Double arrpt = new Point2D.Double(
-          pt.getX() + ArrowSize*dir.getX(),
-          pt.getY() + ArrowSize*dir.getY());
-      Point2D.Double skewL = new Point2D.Double(
-          (dir.getX()*Math.cos(ArrowSkew+Math.PI) - dir.getY()*Math.sin(ArrowSkew+Math.PI))*ArrowSize/2,
-          (dir.getX()*Math.sin(ArrowSkew+Math.PI) + dir.getY()*Math.cos(ArrowSkew+Math.PI))*ArrowSize/2);
-      Point2D.Double skewR = new Point2D.Double(
-          (dir.getX()*Math.cos(-ArrowSkew+Math.PI) - dir.getY()*Math.sin(-ArrowSkew+Math.PI))*ArrowSize/2,
-          (dir.getX()*Math.sin(-ArrowSkew+Math.PI) + dir.getY()*Math.cos(-ArrowSkew+Math.PI))*ArrowSize/2);
+      // rest -= pt.getSize()/2 + ptp.getSize()/2;
+      Point2D.Double arrpt = new Point2D.Double(pt.getX() + ArrowSize
+          * dir.getX(), pt.getY() + ArrowSize * dir.getY());
+      Point2D.Double skewL = new Point2D.Double((dir.getX()
+          * Math.cos(ArrowSkew + Math.PI) - dir.getY()
+          * Math.sin(ArrowSkew + Math.PI))
+          * ArrowSize / 2,
+          (dir.getX() * Math.sin(ArrowSkew + Math.PI) + dir.getY()
+              * Math.cos(ArrowSkew + Math.PI))
+              * ArrowSize / 2);
+      Point2D.Double skewR = new Point2D.Double((dir.getX()
+          * Math.cos(-ArrowSkew + Math.PI) - dir.getY()
+          * Math.sin(-ArrowSkew + Math.PI))
+          * ArrowSize / 2,
+          (dir.getX() * Math.sin(-ArrowSkew + Math.PI) + dir.getY()
+              * Math.cos(-ArrowSkew + Math.PI))
+              * ArrowSize / 2);
 
-      while (rest >= ArrowSize ) {
+      while (rest >= ArrowSize) {
 
-        glarrows.fillPolygon(
-            new int[] {
-              (int)(arrpt.getX()),
-              (int)(arrpt.getX() + skewL.getX()),
-              (int)(arrpt.getX() + skewL.getX() - dir.getX()*ArrowSize/2),
-              (int)(arrpt.getX() - dir.getX()*ArrowSize/2),
-              (int)(arrpt.getX() + skewR.getX() - dir.getX()*ArrowSize/2),
-              (int)(arrpt.getX() + skewR.getX()),
-            },
-            new int[] {
-              (int)(arrpt.getY()),
-              (int)(arrpt.getY() + skewL.getY()),
-              (int)(arrpt.getY() + skewL.getY() - dir.getY()*ArrowSize/2),
-              (int)(arrpt.getY() - dir.getY()*ArrowSize/2),
-              (int)(arrpt.getY() + skewR.getY() - dir.getY()*ArrowSize/2),
-              (int)(arrpt.getY() + skewR.getY()),
-            },
-            6);
+        glarrows.fillPolygon(new int[] { (int) (arrpt.getX()),
+            (int) (arrpt.getX() + skewL.getX()),
+            (int) (arrpt.getX() + skewL.getX() - dir.getX() * ArrowSize / 2),
+            (int) (arrpt.getX() - dir.getX() * ArrowSize / 2),
+            (int) (arrpt.getX() + skewR.getX() - dir.getX() * ArrowSize / 2),
+            (int) (arrpt.getX() + skewR.getX()), }, new int[] {
+            (int) (arrpt.getY()), (int) (arrpt.getY() + skewL.getY()),
+            (int) (arrpt.getY() + skewL.getY() - dir.getY() * ArrowSize / 2),
+            (int) (arrpt.getY() - dir.getY() * ArrowSize / 2),
+            (int) (arrpt.getY() + skewR.getY() - dir.getY() * ArrowSize / 2),
+            (int) (arrpt.getY() + skewR.getY()), }, 6);
 
-        rest -= 2*ArrowSize;
-        arrpt.setLocation(
-            arrpt.getX() + dir.getX()*2*ArrowSize,
-            arrpt.getY() + dir.getY()*2*ArrowSize);
+        rest -= 2 * ArrowSize;
+        arrpt.setLocation(arrpt.getX() + dir.getX() * 2 * ArrowSize,
+            arrpt.getY() + dir.getY() * 2 * ArrowSize);
       }
 
-      Point2D.Double flnkptL = new Point2D.Double(
-          pt.getX() + dir.getY()*pt.getSize()/2,
-          pt.getY() - dir.getX()*pt.getSize()/2);
+      Point2D.Double flnkptL = new Point2D.Double(pt.getX() + dir.getY()
+          * pt.getSize() / 2, pt.getY() - dir.getX() * pt.getSize() / 2);
 
-      Point2D.Double flnkptR = new Point2D.Double(
-          pt.getX() - dir.getY()*pt.getSize()/2,
-          pt.getY() + dir.getX()*pt.getSize()/2);
+      Point2D.Double flnkptR = new Point2D.Double(pt.getX() - dir.getY()
+          * pt.getSize() / 2, pt.getY() + dir.getX() * pt.getSize() / 2);
 
-      // smerove vektory k dalsimu bodu po okraji (pac velikost bodu muze byt ruzna)
-      Point2D.Double dirL = new Point2D.Double(
-          (ptp.getX() + dir.getY()*ptp.getSize()/2) - (pt.getX() + dir.getY()*pt.getSize()/2),
-          (ptp.getY() - dir.getX()*ptp.getSize()/2) - (pt.getY() - dir.getX()*pt.getSize()/2));
-      double lenL = dirL.distance(0,0);
-      dirL.setLocation(dirL.getX()/lenL, dirL.getY()/lenL);
+      // smerove vektory k dalsimu bodu po okraji (pac velikost bodu muze byt
+      // ruzna)
+      Point2D.Double dirL = new Point2D.Double((ptp.getX() + dir.getY()
+          * ptp.getSize() / 2)
+          - (pt.getX() + dir.getY() * pt.getSize() / 2),
+          (ptp.getY() - dir.getX() * ptp.getSize() / 2)
+              - (pt.getY() - dir.getX() * pt.getSize() / 2));
+      double lenL = dirL.distance(0, 0);
+      dirL.setLocation(dirL.getX() / lenL, dirL.getY() / lenL);
 
-      Point2D.Double dirR = new Point2D.Double(
-          (ptp.getX() - dir.getY()*ptp.getSize()/2) - (pt.getX() - dir.getY()*pt.getSize()/2),
-          (ptp.getY() + dir.getX()*ptp.getSize()/2) - (pt.getY() + dir.getX()*pt.getSize()/2));
-      double lenR = dirR.distance(0,0);
-      dirR.setLocation(dirR.getX()/lenR, dirR.getY()/lenR);
+      Point2D.Double dirR = new Point2D.Double((ptp.getX() - dir.getY()
+          * ptp.getSize() / 2)
+          - (pt.getX() - dir.getY() * pt.getSize() / 2),
+          (ptp.getY() + dir.getX() * ptp.getSize() / 2)
+              - (pt.getY() + dir.getX() * pt.getSize() / 2));
+      double lenR = dirR.distance(0, 0);
+      dirR.setLocation(dirR.getX() / lenR, dirR.getY() / lenR);
 
       // Okraj cesty
       glborder.setColor(Color.WHITE);
@@ -352,42 +347,42 @@ public class Java2DGUI implements IGUI {
         glborder.setColor(Color.WHITE);
         glborder.fillPolygon(
             new int[] {
-              (int)(flnkptL.getX() + dir.getY()*FlankHeight/2),
-              (int)(flnkptL.getX() + dir.getY()*FlankHeight/2 + dirL.getX()*size),
-              (int)(flnkptL.getX() - dir.getY()*FlankHeight/2 + dirL.getX()*size),
-              (int)(flnkptL.getX() - dir.getY()*FlankHeight/2),
-            },
+                (int) (flnkptL.getX() + dir.getY() * FlankHeight / 2),
+                (int) (flnkptL.getX() + dir.getY() * FlankHeight / 2 + dirL.getX()
+                    * size),
+                (int) (flnkptL.getX() - dir.getY() * FlankHeight / 2 + dirL.getX()
+                    * size),
+                (int) (flnkptL.getX() - dir.getY() * FlankHeight / 2), },
             new int[] {
-              (int)(flnkptL.getY() - dir.getX()*FlankHeight/2),
-              (int)(flnkptL.getY() - dir.getX()*FlankHeight/2 + dirL.getY()*size),
-              (int)(flnkptL.getY() + dir.getX()*FlankHeight/2 + dirL.getY()*size),
-              (int)(flnkptL.getY() + dir.getX()*FlankHeight/2),
-            },
-            4);
+                (int) (flnkptL.getY() - dir.getX() * FlankHeight / 2),
+                (int) (flnkptL.getY() - dir.getX() * FlankHeight / 2 + dirL.getY()
+                    * size),
+                (int) (flnkptL.getY() + dir.getX() * FlankHeight / 2 + dirL.getY()
+                    * size),
+                (int) (flnkptL.getY() + dir.getX() * FlankHeight / 2), }, 4);
 
         glborder.setColor(Color.CYAN);
         glborder.fillPolygon(
             new int[] {
-              (int)(flnkptR.getX() + dir.getY()*FlankHeight/2),
-              (int)(flnkptR.getX() + dir.getY()*FlankHeight/2 + dirR.getX()*size),
-              (int)(flnkptR.getX() - dir.getY()*FlankHeight/2 + dirR.getX()*size),
-              (int)(flnkptR.getX() - dir.getY()*FlankHeight/2),
-            },
+                (int) (flnkptR.getX() + dir.getY() * FlankHeight / 2),
+                (int) (flnkptR.getX() + dir.getY() * FlankHeight / 2 + dirR.getX()
+                    * size),
+                (int) (flnkptR.getX() - dir.getY() * FlankHeight / 2 + dirR.getX()
+                    * size),
+                (int) (flnkptR.getX() - dir.getY() * FlankHeight / 2), },
             new int[] {
-              (int)(flnkptR.getY() - dir.getX()*FlankHeight/2),
-              (int)(flnkptR.getY() - dir.getX()*FlankHeight/2 + dirR.getY()*size),
-              (int)(flnkptR.getY() + dir.getX()*FlankHeight/2 + dirR.getY()*size),
-              (int)(flnkptR.getY() + dir.getX()*FlankHeight/2),
-            },
-            4);
+                (int) (flnkptR.getY() - dir.getX() * FlankHeight / 2),
+                (int) (flnkptR.getY() - dir.getX() * FlankHeight / 2 + dirR.getY()
+                    * size),
+                (int) (flnkptR.getY() + dir.getX() * FlankHeight / 2 + dirR.getY()
+                    * size),
+                (int) (flnkptR.getY() + dir.getX() * FlankHeight / 2), }, 4);
 
-        rest -= 1.5*FlankWidth;
-        flnkptL.setLocation(
-            flnkptL.getX() + dirL.getX()*1.5*FlankWidth,
-            flnkptL.getY() + dirL.getY()*1.5*FlankWidth);
-        flnkptR.setLocation(
-            flnkptR.getX() + dirR.getX()*1.5*FlankWidth,
-            flnkptR.getY() + dirR.getY()*1.5*FlankWidth);
+        rest -= 1.5 * FlankWidth;
+        flnkptL.setLocation(flnkptL.getX() + dirL.getX() * 1.5 * FlankWidth,
+            flnkptL.getY() + dirL.getY() * 1.5 * FlankWidth);
+        flnkptR.setLocation(flnkptR.getX() + dirR.getX() * 1.5 * FlankWidth,
+            flnkptR.getY() + dirR.getY() * 1.5 * FlankWidth);
       }
     }
 
@@ -406,24 +401,24 @@ public class Java2DGUI implements IGUI {
   }
 
   private void drawTile(BufferedImage img, String file) throws ServiceException {
-    java.io.InputStream is = this.getClass().getClassLoader().getResourceAsStream(file);
+    java.io.InputStream is = this.getClass()
+        .getClassLoader()
+        .getResourceAsStream(file);
     BufferedImage tile = null;
     try {
       tile = javax.imageio.ImageIO.read(is);
-    } catch(java.io.IOException e) {
+    } catch (java.io.IOException e) {
       throw new ServiceException(e);
     }
 
     Graphics2D g = (Graphics2D) img.getGraphics();
-    int height = tile.getHeight(),
-        width  = tile.getWidth(),
-        m = img.getWidth(),
-        n = img.getHeight();
-    m = (m%width == 0) ? (m/width) : (m/width + 1);
-    n = (n%height == 0) ? (n/height) : (n/height + 1);
+    int height = tile.getHeight(), width = tile.getWidth(), m = img.getWidth(), n = img.getHeight();
+    m = (m % width == 0) ? (m / width) : (m / width + 1);
+    n = (n % height == 0) ? (n / height) : (n / height + 1);
     for (int i = 0; i < m; i++) {
       for (int j = 0; j < n; j++) {
-        g.drawImage(tile, new AffineTransform(1f,0f,0f,1f, i*width, j*height), null);
+        g.drawImage(tile, new AffineTransform(1f, 0f, 0f, 1f, i * width, j
+            * height), null);
       }
     }
   }
