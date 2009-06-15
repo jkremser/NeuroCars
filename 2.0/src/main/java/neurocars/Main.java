@@ -3,11 +3,14 @@ package neurocars;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import neurocars.neuralNetwork.Network;
 import neurocars.neuralNetwork.service.InputManager;
 import neurocars.neuralNetwork.service.InputManagerImpl;
+import neurocars.utils.RaceResultComparator;
 import neurocars.valueobj.NeuralNetworkInput;
+import neurocars.valueobj.RaceResult;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -30,6 +33,23 @@ public class Main {
   public static void printHelp(Options options) {
     HelpFormatter help = new HelpFormatter();
     help.printHelp("neurocars", options, true);
+  }
+
+  public static void printResults(RaceResult[] results) {
+    Arrays.sort(results, new RaceResultComparator());
+
+    System.out.println("RACE RESULTS");
+    System.out.println("+----+----------------------+--------+--------+--------+--------+--------+");
+    System.out.println("| #  | id                   | total  | avg    | min    | max    | stddev |");
+    System.out.println("+----+----------------------+--------+--------+--------+--------+--------+");
+    for (int i = 0; i < results.length; i++) {
+      RaceResult r = results[i];
+      System.out.println(String.format(
+          "| %7$2d | %1$-20s | %2$6.0f | %3$6.0f | %4$6.0f | %5$6.0f | %6$6.0f |",
+          r.getCar().getId(), r.getTotal(), r.getAvg(), r.getMin(), r.getMax(),
+          r.getStandardDeviation(), i + 1));
+    }
+    System.out.println("+----+----------------------+--------+--------+--------+--------+--------+");
   }
 
   /**
@@ -98,7 +118,8 @@ public class Main {
 
         String scenario = line.getOptionValue("scenario");
         Game game = new Game(scenario);
-        game.run();
+        RaceResult[] results = game.run();
+        printResults(results);
       } else if ("test".equals(mode)) {
         requiredParameter(line, "input", options);
         requiredParameter(line, "network", options);

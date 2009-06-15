@@ -194,6 +194,7 @@ public class Game {
         ds.addValue(lap);
       }
       RaceResult r = new RaceResult();
+      r.setCar(c);
       r.setLaps(ds.getN());
       r.setTotal(ds.getSum());
       r.setMax(ds.getMax());
