@@ -12,9 +12,14 @@ public interface IGUI {
   public void init() throws ServiceException;
 
   /**
-   * Prekresli obrazovku
+   * Zacatek sceny (inicializace, pred zpracovanim vstupu)
    */
-  public void refresh();
+  public void startScene();
+
+  /**
+   * Dokresleni zbytku sceny
+   */
+  public void finishScene();
 
   /**
    * Zpozdeni cyklu, aby byla hra hratelna ... u NoGUI je 0

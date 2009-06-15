@@ -1,22 +1,17 @@
 package neurocars.gui.renderer;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import neurocars.entities.Car;
+import neurocars.utils.GraphicUtils;
 import neurocars.valueobj.WayPoint;
 
 public class CarCircleRenderer implements ICarRenderer {
 
-  private final Color color;
-
-  public CarCircleRenderer(Color color) {
-    this.color = color;
-  }
-
-  public void draw(Graphics g, Car car) {
-    g.setColor(color);
+  public void draw(Graphics2D g, Car car, int color) {
+    g.setColor(GraphicUtils.palette[color]);
     int x = (int) car.getX();
     int y = (int) car.getY();
     int size = 10;
@@ -38,7 +33,7 @@ public class CarCircleRenderer implements ICarRenderer {
         (int) (y + length * Math.sin(nextWayPointAngle) / 2));
   }
 
-  public void erase(Graphics g, Car car, BufferedImage background) {
+  public void erase(Graphics2D g, Car car, BufferedImage background) {
     int x1 = (int) (car.getX() - car.getVx() - 20);
     int y1 = (int) (car.getY() - car.getVy() - 20);
     int x2 = (int) (car.getX() - car.getVx() + 20);

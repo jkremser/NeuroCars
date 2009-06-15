@@ -116,6 +116,8 @@ public class Game {
       while (!gui.isEscapePressed() && cycleCounter < finalCycle) {
         long loopBeginTime = System.currentTimeMillis();
 
+        gui.startScene();
+
         for (int i = 0; i < cars.size(); i++) {
           Car c = cars.get(i);
           // zpracovani vstupu
@@ -144,7 +146,7 @@ public class Game {
           }
         }
 
-        gui.refresh();
+        gui.finishScene();
 
         // long delta = System.currentTimeMillis() - loopBeginTime;
         cycleCounter++;

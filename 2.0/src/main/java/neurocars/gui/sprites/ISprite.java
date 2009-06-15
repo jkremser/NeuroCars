@@ -1,6 +1,6 @@
 package neurocars.gui.sprites;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -11,8 +11,8 @@ import java.awt.image.BufferedImage;
  */
 public interface ISprite {
 
-  public void draw(Graphics g);
+  public void draw(Graphics2D g);
 
-  public void erase(Graphics g, BufferedImage background);
+  public void erase(Graphics2D g, BufferedImage background);
 
 }
