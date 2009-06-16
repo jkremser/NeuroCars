@@ -61,7 +61,7 @@ public class Java2DGUI implements IGUI {
 
   // Velikost okrajoveho pasu a stredovych sipek
   private static final int FlankWidth = 30, /* FlankHeight = 3, */
-      ArrowSize = 30;
+  ArrowSize = 30;
   // zkoseni sipky (uhel v radianech)
   private static final double ArrowSkew = Math.PI / 4;
 
@@ -159,9 +159,10 @@ public class Java2DGUI implements IGUI {
         KeyboardController kc = (KeyboardController) c.getController();
         kc.setKeyboard(keyboard);
       }
-      if (color + 1 < GraphicUtils.palette.length)
-        color++;
       sprites.add(new CarSprite(c, renderer, color));
+      if (color < GraphicUtils.palette.length - 1) {
+        color++;
+      }
     }
   }
 
@@ -364,7 +365,7 @@ public class Java2DGUI implements IGUI {
 
       rest = lenL; // (melo by lenL == lenR)
       while (rest > 0) {
-        double size = (rest < FlankWidth) ? rest : FlankWidth;
+        // double size = (rest < FlankWidth) ? rest : FlankWidth;
 
         /*
          * //glborder.setColor(Color.WHITE); glborder.setColor(new Color(0.45f,
