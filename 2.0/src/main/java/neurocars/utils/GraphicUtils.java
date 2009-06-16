@@ -16,7 +16,7 @@ public class GraphicUtils {
 
   public static final Color[] palette = new Color[] { Color.WHITE,
       new Color(62, 88, 193), new Color(71, 133, 65), new Color(232, 128, 23),
-      new Color(159, 28, 28), Color.MAGENTA, Color.ORANGE };
+      new Color(159, 28, 28), Color.ORANGE, Color.MAGENTA };
 
   /**
    * Rotuje obrazek o theta stupnu, vraci kopii
