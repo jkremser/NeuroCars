@@ -18,19 +18,27 @@ public class NeuroController extends Controller {
   // private double maxSpeed;
   private Network net;
   private double threshold;
+  private boolean verbose;
 
-  public NeuroController(Network net, double threshold) {
+  public NeuroController(Network net, double threshold, boolean verbose) {
     // net.setLearningMode(false);
     this.net = net;
     this.threshold = threshold;
+    this.verbose = verbose;
   }
 
   public void next(Car car) {
     this.in = car.getNeuralNetworkInput();
-    boolean flip = in.getCurveAngle() < 0;
-    System.out.println(out);
-    this.out = net.runNetwork(flip ? Transformer.flip(in) : in); // pretoc input
-    this.out = (flip ? Transformer.flip(this.out) : this.out); // pretoc output
+    // boolean flip = in.getCurveAngle() < 0;
+    boolean flip = false;
+    if (verbose) {
+      System.out.println(out);
+    }
+    if (flip) {
+      this.out = Transformer.flip(net.runNetwork(Transformer.flip(in), verbose)); // pretoc
+    } else {
+      this.out = net.runNetwork(in, verbose);
+    }
   }
 
   public boolean accelerate() {

@@ -56,7 +56,7 @@ public class Transformer {
     // item.addInputValue(input.getSteeringWheel());
     item.addInputValue(input.getWayPointDistance());
     item.addInputValue(input.getWayPointAngle());
-    item.addInputValue(input.getCurveAngle());
+    // item.addInputValue(input.getCurveAngle());
     // velikost nasledujiciho bodu. Ma to tam byt, nebo ne???
     return item;
   }

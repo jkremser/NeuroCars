@@ -208,15 +208,15 @@ public class InputManagerImpl implements InputManager {
           item.addOutputValue(Transformer.normalize(Double.parseDouble(stringValues[UP_DOWN_KEY])));
           item.addOutputValue(Transformer.normalize(Double.parseDouble(stringValues[LEFT_RIGHT_KEY])));
           // INPUT
-          double curveAngle = Double.parseDouble(stringValues[CURVE_ANGLE]);
+          // double curveAngle = Double.parseDouble(stringValues[CURVE_ANGLE]);
           item.addInputValue(Double.parseDouble(stringValues[SPEED]));
-          // item.addOutputValue(Double.parseDouble(stringValues[STEERING_WHEEL]));
+          // item.addInputValue(Double.parseDouble(stringValues[STEERING_WHEEL]));
           item.addInputValue(Double.parseDouble(stringValues[WAYPOINT_DISTANCE]));
           item.addInputValue(Double.parseDouble(stringValues[WAYPOINT_ANGLE]));
-          item.addInputValue(curveAngle);
-          if (curveAngle < 0) {
-            item = Transformer.flip(item);
-          }
+          // item.addInputValue(curveAngle);
+          // if (curveAngle < 0) {
+          // item = Transformer.flip(item);
+          // }
         } catch (NumberFormatException nfe) {
           System.err.println("Nepodarilo se provezt konverzi 'String -> Double' na radku "
               + cou);

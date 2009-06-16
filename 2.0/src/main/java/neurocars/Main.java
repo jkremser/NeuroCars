@@ -96,11 +96,11 @@ public class Main {
         File inputFile = new File(line.getOptionValue("input"));
         File outputFile = new File(line.getOptionValue("network"));
         double thresholdError = Double.valueOf(line.getOptionValue("threshold",
-            "0.001"));
+            "0.3"));
         int hiddenLayersNumber = Integer.valueOf(line.getOptionValue("layers",
             "1"));
         int hiddenLayerNeurons = Integer.valueOf(line.getOptionValue("neurons",
-            "8"));
+            "7"));
         double learningConstant = Double.valueOf(line.getOptionValue(
             "learningconstant", "0.01"));
         int maxIterations = Integer.valueOf(line.getOptionValue("iterations",
@@ -142,19 +142,19 @@ public class Main {
           try {
             System.out.println("speed");
             nni.setSpeed(Double.parseDouble(reader.readLine()));
-            System.out.println("steeringWheel");
-            nni.setSteeringWheel(Double.parseDouble(reader.readLine()));
+            // System.out.println("steeringWheel");
+            // nni.setSteeringWheel(Double.parseDouble(reader.readLine()));
             System.out.println("wayPointDistance");
             nni.setWayPointDistance(Double.parseDouble(reader.readLine()));
             System.out.println("wayPointAngle");
             nni.setWayPointAngle(Double.parseDouble(reader.readLine()));
-            System.out.println("curveAngle");
-            nni.setCurveAngle(Double.parseDouble(reader.readLine()));
+            // System.out.println("curveAngle");
+            // nni.setCurveAngle(Double.parseDouble(reader.readLine()));
           } catch (NumberFormatException nfe) {
             System.out.println("Thanks for using interactive mode.");
             break;
           }
-          network.runNetwork(nni);
+          network.runNetwork(nni, true);
         }
       }
     } catch (ParseException pe) {

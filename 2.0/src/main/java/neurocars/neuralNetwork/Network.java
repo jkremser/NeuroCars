@@ -33,7 +33,7 @@ public class Network implements Serializable {
   private transient InputManager inputManager;
 
   // network
-  public static final int INPUT_SIZE = 4;
+  public static final int INPUT_SIZE = 3;
   public static final int OUTPUT_SIZE = 2;
   public transient static final int DEFAULT_HIDDEN_LAYERS_NUMBER = 1;
   private int hiddenLayersNumber;
@@ -51,7 +51,7 @@ public class Network implements Serializable {
   private transient int iteration;
 
   // ladeni
-  private int iterationStep = 60;
+  private int iterationStep = 40;
 
   // stav site
   private volatile boolean learningMode;
@@ -207,10 +207,7 @@ public class Network implements Serializable {
     outputLayer.computeOutput();
   }
 
-  /**
-   * Spusti uceni
-   */
-  public void learn() {
+  private void readInput() {
     new Thread() {
 
       public void run() {
@@ -218,8 +215,18 @@ public class Network implements Serializable {
             System.in));
         try {
           String command = reader.readLine();
-          if ("stop".equals(command)) {
+          if ("stop".equals(command) || "s".equals(command)) {
             learningMode = false;
+          }
+          if ("1".equals(command)) {
+            Constants.increaseLearningConstant();
+            readInput();
+          }
+          if ("2".equals(command)) {
+            Constants.decreaseLearningConstant();
+            readInput();
+          } else {
+            readInput();
           }
         } catch (IOException e) {
           // TODO Auto-generated catch block
@@ -227,7 +234,14 @@ public class Network implements Serializable {
         }
       }
     }.start();
+  }
 
+  /**
+   * Spusti uceni
+   */
+  public void learn() {
+
+    readInput();
     // System.out.println("endcondition" + endCondition);
     System.out.println("iteration:" + iteration);
     System.out.println("trainError: " + trainError);
@@ -431,16 +445,20 @@ public class Network implements Serializable {
    *          vstup
    * @return vystup
    */
-  public NeuralNetworkOutput runNetwork(NeuralNetworkInput input) {
+  public NeuralNetworkOutput runNetwork(NeuralNetworkInput input,
+      boolean verbose) {
     if (learningMode) {
       throw new java.lang.IllegalStateException(
           "This method cannot be called on network, that is not learned yet");
     }
     DataItem item = Transformer.nnInputToDataItem(input);
     processInput(item);
-    System.out.print(item + " -->");
+
     DataItem outputDI = getOutput();
-    System.out.println(outputDI);
+    if (verbose) {
+      System.out.print(item + " -->");
+      System.out.println(outputDI);
+    }
     return Transformer.dataItemToNnOutput(outputDI);
   }
 
@@ -466,9 +484,9 @@ public class Network implements Serializable {
     DataItem output = new DataItem(-1, OUTPUT_SIZE);
     for (int i = 0; i < OUTPUT_SIZE; i++) {
       double item = outputLayer.getNode(i).getOutput();
-      if (item < 0.25) {
+      if (item < 0.33) {
         item = 0;
-      } else if (item > 0.75) {
+      } else if (item > 0.66) {
         item = 1;
       } else {
         item = 0.5;
@@ -492,10 +510,10 @@ public class Network implements Serializable {
       System.out.println();
       System.out.println("item: " + item);
       processInput(item);
-      // DataItem result = getOutputForTesting(); // u diskretniho vystupu
+      DataItem result = getOutputForTesting(); // u diskretniho vystupu
       // 0/0.5/1
-      DataItem result = getOutput();
-      System.out.println("net output: " + getOutput());
+      // DataItem result = getOutput(); // u spojiteho vystupu
+      System.out.println("net output: " + result);
       boolean cond = true;
       for (int i = 0; i < OUTPUT_SIZE; i++) {
         if (Math.abs(item.getOutput(i) - result.getOutput(i)) < DOUBLE_PRECISION) {

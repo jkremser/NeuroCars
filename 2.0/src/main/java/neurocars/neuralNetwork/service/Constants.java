@@ -21,7 +21,15 @@ public class Constants {
    * @return
    */
   public static double getLearningConstant(int iteration) {
-    return learningConstant + iteration / 150000.0;
+    return learningConstant + iteration / 250000.0;
+  }
+
+  public static void increaseLearningConstant() {
+    learningConstant = learningConstant * 1.1;
+  }
+
+  public static void decreaseLearningConstant() {
+    learningConstant = learningConstant * 0.9;
   }
 
   public static void setMomentum(double momentum) {
