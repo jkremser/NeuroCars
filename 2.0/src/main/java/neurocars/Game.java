@@ -15,6 +15,7 @@ import neurocars.valueobj.Track;
 import neurocars.valueobj.WayPoint;
 
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math.util.MathUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -96,6 +97,7 @@ public class Game {
     WayPoint next = getTrack().getWayPoints().get(1);
     double startAngle = Math.atan2(next.getY() - start.getY(), next.getX()
         - start.getX());
+    startAngle = MathUtils.normalizeAngle(startAngle, Math.PI);
 
     int index = 0;
     // int distance = 15;
