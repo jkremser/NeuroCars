@@ -23,4 +23,4 @@ java -jar target/neurocars-0.0.1-SNAPSHOT-jar-with-dependencies.jar -scenario co
 
 ## Demo
 
-![nn race demo](https://github.com/Jiri-Kremser/NeuroCars/raw/gif/race.gif)
+![nn race demo](https://github.com/Jiri-Kremser/NeuroCars/raw/master/race.gif)
