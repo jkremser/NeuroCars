@@ -1,5 +1,5 @@
 # NeuroCars
-This is a university project where we (team of 3 people) implemented the back-propagation neural network and learn how to drive a car in a very simple environment. The learning data were replay files that were recorded when human player interacted with the environment.
+This is a university project where we (team of 3 people) implemented the back-propagation neural network and train it to drive a car in a very simple environment. The learning data were replay files that were recorded when human player interacted with the environment.
 
 ### Structure
 
