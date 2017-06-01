@@ -3,10 +3,10 @@ This is a university project where we (team of 3 people) implemented the back-pr
 
 ### Structure
 
-replays: config/replay
-serialized nets: config/neuralnetwork
-maps: config/tracks
-scenarios: config/scenario
+* replays: config/replay
+* serialized nets: config/neuralnetwork
+* maps: config/tracks
+* scenarios: config/scenario
 
 
 ## Usage
