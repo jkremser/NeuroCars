@@ -1,5 +1,5 @@
 # NeuroCars
-This is a university project where we (team of 3 people) implemented the back-propagation neural network and train it to drive a car in a very simple environment. The learning data were replay files that were recorded when human player interacted with the environment.
+This is a university project where we (team of 3 people: me, Marin Rehanek and Lukas Holcik) implemented the back-propagation neural network and train it to drive a car in a very simple environment. The learning data were replay files that were recorded when human player interacted with the environment.
 
 ### Structure
 
@@ -24,7 +24,3 @@ java -jar target/neurocars-0.0.1-SNAPSHOT-jar-with-dependencies.jar -scenario co
 ## Demo
 
 ![nn race demo](https://github.com/Jiri-Kremser/NeuroCars/raw/master/race.gif)
-
-
-# TEAM
-This is not only my work, it's a university project where we work in a team of 4 people. I recall Marin Rehanek and Lukas Holcik, forgot the last member, sorry :D
