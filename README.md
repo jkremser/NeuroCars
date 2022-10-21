@@ -24,3 +24,7 @@ java -jar target/neurocars-0.0.1-SNAPSHOT-jar-with-dependencies.jar -scenario co
 ## Demo
 
 ![nn race demo](https://github.com/Jiri-Kremser/NeuroCars/raw/master/race.gif)
+
+
+# TEAM
+This is not only my work, it's a university project where we work in a team of 4 people. I recall Marin Rehanek and Lukas Holcik, forgot the last member, sorry :D
